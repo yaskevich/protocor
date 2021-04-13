@@ -68,6 +68,10 @@ const __dirname = path.dirname(__filename);
 		// res.redirect('/login');
 	});
 
+	app.get('/api/test', (req, res) => {
+		res.json({ "message": "ok" });
+	});
+
 
 	app.listen(port);
 	// console.log(`Running at port ${port}`);

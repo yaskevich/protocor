@@ -21,13 +21,13 @@ module.exports = {
 			}),
 		]},
 	devServer: {
-		port: 3050,
+		port: 3060,
 		host: "localhost",
 		https: false,
 		open: false,
 		proxy: {
 			"/api": {
-				target: "http://localhost:3051",
+				target: "http://localhost:3061",
 				changeOrigin: true,
 				ws:true,
 				// pathRewrite: {

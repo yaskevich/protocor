@@ -39,22 +39,22 @@ export default {
     const resp = ref({});
     const token = ref('');
 
-    onBeforeMount(async() => {
-
-
-    });
+    // onBeforeMount(async() => {
+    // });
 
     const onSubmit = async() => {
       console.log("token", token);
-      try {
-        const config = {
-           // headers: { Authorization: "Bearer " + state.token },
-         };
-        const response = await axios.post("/api/query", {token: token.value},); // config);
-        resp.value = response.data;
-      } catch (error) {
-        console.log("Cannot get data via API", error)
-        return error;
+      if(token.value){
+        try {
+          const config = {
+             // headers: { Authorization: "Bearer " + state.token },
+           };
+          const response = await axios.post("/api/query", {token: token.value},); // config);
+          resp.value = response.data;
+        } catch (error) {
+          console.log("Cannot get data via API", error)
+          return error;
+        }
       }
     };
 

@@ -1,8 +1,8 @@
 <template>
   <div class="p-d-flex p-jc-center p-mb-4">Запрос: <span class="p-text-bold p-pl-2">{{token}}</span></div>
   <div class="p-d-flex p-jc-center p-mb-4">
-    <InputText type="text" v-model="token" />
-    <Button label="Искать" @click="onSubmit($event)"/>
+    <InputText type="text" v-model="token" @keyup.enter="onSubmit($event)"/>
+    <Button label="Искать" @click="onSubmit($event)" :disabled="!token ? 'disabled': null"/>
   </div>
   <div v-if="resp.hasOwnProperty('corp_stat')">
     <div class="">Корпус: {{resp.corp_stat.stats[1].num}} слов, {{resp.corp_stat.stats[0].num}} документов</div>
@@ -21,17 +21,16 @@
 </template>
 <script>
 import { ref } from 'vue';
-import { onBeforeMount } from 'vue';
+// import { onBeforeMount } from 'vue';
 // import store from "../store";
-import { useRoute } from 'vue-router';
+// import { useRoute } from 'vue-router';
 import axios from "axios";
 
-
 export default {
-  name: "User",
-  props: {
-    // datum: Object,
-  },
+  name: "Search",
+  // props: {
+  //    datum: Object,
+  // },
   setup() {
 
     // const vuerouter = useRoute();
@@ -43,7 +42,7 @@ export default {
     // });
 
     const onSubmit = async() => {
-      console.log("token", token);
+      console.log("token", token.value);
       if(token.value){
         try {
           const config = {
@@ -60,9 +59,9 @@ export default {
 
     return { onSubmit, resp, token };
   },
-  components: {
-
-  }
+  // components: {
+  //
+  // }
 };
 </script>
 <style>

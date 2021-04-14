@@ -4,8 +4,19 @@
     <InputText type="text" v-model="token" />
     <Button label="Искать" @click="onSubmit($event)"/>
   </div>
-  <div>
-    {{}}
+  <div v-if="resp.hasOwnProperty('corp_stat')">
+    <div class="">Корпус: {{resp.corp_stat.stats[1].num}} слов, {{resp.corp_stat.stats[0].num}} документов</div>
+    <div>Найдено: {{resp.found_stat.stats[1].num}} вхождений, {{resp.found_stat.stats[0].num}} документов</div>
+
+    <div v-for="(value, key) in resp.documents" class="p-mt-4 doc p-p-2 p-shadow-3">
+      <div v-for="(snippet, index) in value.snippets" class="p-mt-2 snippet">
+        <span v-for="(word, num) in snippet.words" :class="word.hit?'hit':''">
+          {{word.text}}
+        </span>
+      </div>
+      <span class="source-title p-pr-2">{{value.document_info.title}}</span>
+      <span class="note">{{value.document_info.homonymy}}</span>
+    </div>
   </div>
 </template>
 <script>
@@ -36,8 +47,10 @@ export default {
     const onSubmit = async() => {
       console.log("token", token);
       try {
-        const config =  {};  // { headers: { Authorization: "Bearer " + state.token }, };
-        const response = await axios.get("/api/query", config);
+        const config = {
+           // headers: { Authorization: "Bearer " + state.token },
+         };
+        const response = await axios.post("/api/query", {token: token.value},); // config);
         resp.value = response.data;
       } catch (error) {
         console.log("Cannot get data via API", error)
@@ -52,3 +65,20 @@ export default {
   }
 };
 </script>
+<style>
+.source-title{
+  /* font-style: italic; */
+  font-size: 0.75rem;
+}
+.note{
+  color: red;
+  font-size: 0.5rem;
+}
+.hit{
+  color:darkred;
+  font-weight:bold;
+}
+.doc{
+  /* border: 1px dashed gray; */
+}
+</style>

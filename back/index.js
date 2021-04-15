@@ -83,9 +83,9 @@ const __dirname = path.dirname(__filename);
 				"mysent": "",
 				"mysize": "",
 				"mysentsize": "",
-				"dpp": "",
-				"spp": "",
-				"spd": "",
+				"dpp": req.body.dpp || 50, // documents per page
+				"spp": "", // snippets per page
+				"spd": req.body.spd || 2, // snippets per doctument
 				"mydocsize": "",
 				"mode": "main",
 				"lang": "ru",

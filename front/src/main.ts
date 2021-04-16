@@ -9,10 +9,12 @@ import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
+import InputNumber from 'primevue/inputnumber';
 
 createApp(App)
   .use(PrimeVue)
   .use(router)
   .component('Button', Button)
   .component('InputText', InputText)
+  .component('InputNumber', InputNumber)
   .mount('#app')

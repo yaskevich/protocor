@@ -1,9 +1,23 @@
 <template>
-  <div class="p-d-flex p-jc-center p-mb-4">Запрос: <span class="p-text-bold p-pl-2">{{token}}</span></div>
+  <div class="p-field">
+     <label for="spd" class="p-pr-2">Примеров на документ</label>
+     <!-- decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success"  -->
+     <InputNumber inputClass="num-input" id="spd" v-model="params.spd" showButtons buttonLayout="horizontal" :step="1"
+         incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" :min="rules.spd.min" :max="rules.spd.max"
+         @input="onSubmit($event)" />
+   </div>
+  <div class="p-field">
+     <label for="dpp" class="p-pr-2">Документов на страницу</label>
+     <InputNumber inputClass="num-input" id="dpp" v-model="params.dpp" showButtons buttonLayout="horizontal" :step="1"
+         incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" :min="rules.dpp.min" :max="rules.dpp.max"
+         @input="onSubmit($event)"/>
+   </div>
+  <div class="p-d-flex p-jc-center p-mb-4">Запрос: <span class="p-text-bold p-pl-2">{{params.token}}</span></div>
   <div class="p-d-flex p-jc-center p-mb-4">
-    <InputText type="text" v-model="token" @keyup.enter="onSubmit($event)"/>
-    <Button label="Искать" @click="onSubmit($event)" :disabled="!token ? 'disabled': null"/>
+    <InputText type="text" v-model="params.token" @keyup.enter="onSubmit($event)"/>
+    <Button label="Искать" @click="onSubmit($event)" :disabled="!params.token ? 'disabled': null"/>
   </div>
+
   <div v-if="resp.hasOwnProperty('corp_stat')">
     <div class="">Корпус: {{resp.corp_stat.stats[1].num}} слов, {{resp.corp_stat.stats[0].num}} документов</div>
     <div>Найдено: {{resp.found_stat.stats[1].num}} вхождений, {{resp.found_stat.stats[0].num}} документов</div>
@@ -20,7 +34,7 @@
   </div>
 </template>
 <script>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 // import { onBeforeMount } from 'vue';
 // import store from "../store";
 // import { useRoute } from 'vue-router';
@@ -36,19 +50,35 @@ export default {
     // const vuerouter = useRoute();
     // const id = vuerouter.params.id;
     const resp = ref({});
-    const token = ref('');
+    const params = reactive({token: '', spd: 10, dpp: 10});
+    const rules = {
+      dpp: { min: 1, max: 100 },
+      spd: { min: 1, max: 100 },
+    }
 
     // onBeforeMount(async() => {
     // });
 
-    const onSubmit = async() => {
-      console.log("token", token.value);
-      if(token.value){
+    const onSubmit = async(e) => {
+      // console.log(e);
+      if (e?.originalEvent?.target?.id) {
+        console.log("new val", e.originalEvent.target.id, e.value);
+        if (e.value > rules[e.originalEvent.target.id]["max"]) {
+            params[e.originalEvent.target.id] = rules[e.originalEvent.target.id]["max"];
+        } else if (e.value < rules[e.originalEvent.target.id]["min"]) {
+          params[e.originalEvent.target.id] = rules[e.originalEvent.target.id]["min"];
+        } else {
+          params[e.originalEvent.target.id] = e.value;
+        }
+      }
+      console.log("data", params);
+
+      if(params.token){
         try {
           const config = {
              // headers: { Authorization: "Bearer " + state.token },
            };
-          const response = await axios.post("/api/query", {token: token.value},); // config);
+          const response = await axios.post("/api/query", params,); // config);
           resp.value = response.data;
         } catch (error) {
           console.log("Cannot get data via API", error)
@@ -57,7 +87,7 @@ export default {
       }
     };
 
-    return { onSubmit, resp, token };
+    return { onSubmit, resp, params, rules };
   },
   // components: {
   //
@@ -73,11 +103,17 @@ export default {
   color: red;
   font-size: 0.5rem;
 }
+.snippet{
+  border: 1px dashed gray;
+}
 .hit{
   color:darkred;
   font-weight:bold;
 }
 .doc{
   /* border: 1px dashed gray; */
+}
+.num-input{
+  width: 3rem;
 }
 </style>

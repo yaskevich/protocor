@@ -3,20 +3,25 @@ import axios from "axios";
 // import router from "./router";
 
 const state = reactive({
-  token: localStorage.getItem('token') || '',
+  key: localStorage.getItem('key') || '',
   user: {},
+  search: {
+    token: localStorage.getItem('token') || '',
+    spd: Number(localStorage.getItem('spd')) || 10,
+    dpp: Number(localStorage.getItem('dpp')) || 10,
+  },
   error: "",
 });
 
 const logout = async() => {
-  localStorage.setItem("token", "");
+  localStorage.setItem("key", "");
   state.user  = {};
 }
 
 const getUser = async() => {
-    if(state.token) {
+    if(state.key) {
       try {
-        const config = { headers: { Authorization: "Bearer " + state.token }, };
+        const config = { headers: { Authorization: "Bearer " + state.key }, };
         const response = await axios.get("/api/user/info", config);
         state.user = response.data;
       } catch (error) {
@@ -27,13 +32,13 @@ const getUser = async() => {
 };
 
 const doLogin = async(payload: Object): Promise<any> => {
-  // if (!state.token) {
+  // if (!state.key) {
     try {
      const response = await axios.post("/api/user/login", payload);
      if ("data" in response && "id" in response.data){
        state.user = response.data;
-       state.token  = response.data.token || '';
-       localStorage.setItem('token', state.token);
+       state.key  = response.data.key || '';
+       localStorage.setItem('key', state.key);
      } else {
        console.log(response);
        return response.data.error;
@@ -44,13 +49,13 @@ const doLogin = async(payload: Object): Promise<any> => {
      return error;
    }
  // }
- // console.log("No query: token exists.");
+ // console.log("No query: key exists.");
 };
 
 // const initUser = async(data: Object): Promise<any> => {
-//   if (state.token) {
+//   if (state.key) {
 //     try {
-//       const config = { headers: { Authorization: "Bearer " + state.token } };
+//       const config = { headers: { Authorization: "Bearer " + state.key } };
 //       const response = await axios.post('/api/user/add', data, config);
 //       console.log(response.data);
 //       return response;
@@ -59,13 +64,13 @@ const doLogin = async(payload: Object): Promise<any> => {
 //      return error;
 //    }
 //  }
-//  console.log("No token. Fail.");
+//  console.log("No key. Fail.");
 // };
 
 const postData = async(table: string, data: Object): Promise<any> => {
-  if (state.token) {
+  if (state.key) {
     try {
-      const config = { headers: { Authorization: "Bearer " + state.token } };
+      const config = { headers: { Authorization: "Bearer " + state.key } };
       console.log("send query", table);
       const response = await axios.post('/api/x/'+ table, data, config);
       console.log("store:response", response.data);
@@ -75,13 +80,13 @@ const postData = async(table: string, data: Object): Promise<any> => {
      return error;
    }
  }
- console.log("No token. Fail.");
+ console.log("No key. Fail.");
 };
 
 // const deleteById = async(table: string, id: string): Promise<any> => {
-//   if (state.token) {
+//   if (state.key) {
 //     try {
-//     const config = { headers: { Authorization: "Bearer " + state.token }, "params": {} };
+//     const config = { headers: { Authorization: "Bearer " + state.key }, "params": {} };
 //      // if(id) { config["params"] = { id: id }; }
 //      console.log("delete query", table, id);
 //      const response = await axios.delete("/api/" + table + "/" + id, config);
@@ -92,13 +97,13 @@ const postData = async(table: string, data: Object): Promise<any> => {
 //      return error;
 //    }
 //  }
-//  console.log("No token. Fail.");
+//  console.log("No key. Fail.");
 // };
 
 // const getData = async(table: string, id?: string): Promise<any> => {
-//   if (state.token) {
+//   if (state.key) {
 //     try {
-//     const config = { headers: { Authorization: "Bearer " + state.token }, "params": {} };
+//     const config = { headers: { Authorization: "Bearer " + state.key }, "params": {} };
 //      if(id) { config["params"] = { id: id }; }
 //      console.log("send query", table);
 //      const response = await axios.get("/api/" + table, config);
@@ -109,19 +114,19 @@ const postData = async(table: string, data: Object): Promise<any> => {
 //      return error;
 //    }
 //  }
-//  console.log("No token. Fail.");
+//  console.log("No key. Fail.");
 // };
 
 
 export default {
   // state: readonly(state),
   logout,
-  initUser,
   postData,
   getUser,
   doLogin,
-  getData,
-  deleteById,
+  // initUser,
+  // getData,
+  // deleteById,
   // doLogout,
   // getData
   state: state,

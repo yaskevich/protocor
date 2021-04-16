@@ -39,6 +39,7 @@ import { ref, reactive } from 'vue';
 // import store from "../store";
 // import { useRoute } from 'vue-router';
 import axios from "axios";
+import store from "../store";
 
 export default {
   name: "Search",
@@ -50,7 +51,8 @@ export default {
     // const vuerouter = useRoute();
     // const id = vuerouter.params.id;
     const resp = ref({});
-    const params = reactive({token: '', spd: 10, dpp: 10});
+    const params = store.state.search;
+    console.log("init params", params);
     const rules = {
       dpp: { min: 1, max: 100 },
       spd: { min: 1, max: 100 },
@@ -71,9 +73,15 @@ export default {
           params[e.originalEvent.target.id] = e.value;
         }
       }
+      localStorage.setItem('token', params.token);
+      localStorage.setItem('spd', params.spd);
+      localStorage.setItem('dpp', params.dpp);
+
       console.log("data", params);
 
       if(params.token){
+
+
         try {
           const config = {
              // headers: { Authorization: "Bearer " + state.token },

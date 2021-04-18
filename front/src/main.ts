@@ -1,5 +1,5 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import { create } from 'vue'
+import  from './.vue'
 import './registerServiceWorker'
 import router from './router'
 import PrimeVue from 'primevue/config';
@@ -10,11 +10,43 @@ import 'primeicons/primeicons.css';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
+import Dialog from 'primevue/dialog';
+import SelectButton from 'primevue/selectbutton';
+import Divider from 'primevue/divider';
+import Toast from 'primevue/toast';
+import AutoComplete from 'primevue/autocomplete';
+import Inplace from 'primevue/inplace';
+import MultiSelect from 'primevue/multiselect';
+import Tag from 'primevue/tag';
+import InputSwitch from 'primevue/inputswitch';
+import Panel from 'primevue/panel';
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
+import Dropdown from 'primevue/dropdown';
+import Badge from 'primevue/badge';
+import ScrollTop from 'primevue/scrolltop';
 
-createApp(App)
+create()
   .use(PrimeVue)
   .use(router)
+  .component('Dialog', Dialog)
   .component('Button', Button)
   .component('InputText', InputText)
   .component('InputNumber', InputNumber)
-  .mount('#app')
+  .component('ScrollTop', ScrollTop)
+  .component('Badge', Badge)
+  .component('Dropdown', Dropdown)
+  .component('TabView', TabView)
+  .component('TabPanel', TabPanel)
+  .component('Panel', Panel)
+  .component('SelectButton', SelectButton)
+  .component('InputSwitch', InputSwitch)
+  .component('MultiSelect', MultiSelect)
+  .component('Inplace', Inplace)
+  .component('InputText', InputText)
+  .component('AutoComplete', AutoComplete)
+  .component('Button', Button)
+  .component('Toast', Toast)
+  .component('Divider', Divider)
+  .component('Tag', Tag)
+  .mount('#')

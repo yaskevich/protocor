@@ -1,5 +1,5 @@
-import { create } from 'vue'
-import  from './.vue'
+import { createApp } from 'vue'
+import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
 import PrimeVue from 'primevue/config';
@@ -26,7 +26,7 @@ import Dropdown from 'primevue/dropdown';
 import Badge from 'primevue/badge';
 import ScrollTop from 'primevue/scrolltop';
 
-create()
+createApp(App)
   .use(PrimeVue)
   .use(router)
   .component('Dialog', Dialog)
@@ -43,10 +43,8 @@ create()
   .component('InputSwitch', InputSwitch)
   .component('MultiSelect', MultiSelect)
   .component('Inplace', Inplace)
-  .component('InputText', InputText)
   .component('AutoComplete', AutoComplete)
-  .component('Button', Button)
   .component('Toast', Toast)
   .component('Divider', Divider)
   .component('Tag', Tag)
-  .mount('#')
+  .mount('#app');

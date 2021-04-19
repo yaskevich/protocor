@@ -1,31 +1,27 @@
 <template>
-  <div class="p-container " style="text-align:center;max-width:10rem;">
-  <div class="p-field p-float-label">
-      <InputText id="user-id" type="username" aria-describedby="user-id-help" class="p-invalid"  v-model="user.email" />
-      <label for="user-id">Электронная почта</label>
-      <small id="user-id-help" class="p-error">Username is not available.</small>
-  </div>
+<div class="p-d-flex p-jc-center">
+  <div class="card">
+    <h5 class="p-text-center">Вход</h5>
+    <form @submit.prevent="confirm" class="p-fluid">
 
-  <div class="p-float-label p-mt-6">
-  	<Password v-model="user.password" :feedback="false" toggleMask id="pwd"/>
-  	<label for="pwd">Пароль</label>
-  </div>
+      <div class="p-field p-float-label">
+          <InputText id="user-id" type="username" aria-describedby="user-id-help" class="p-invalid"  v-model="user.email" />
+          <label for="user-id">Электронная почта</label>
+          <small id="user-id-help" class="p-error">Username is not available.</small>
+      </div>
 
-  <div class="p-mt-6">
-    <Button label="Войти" @click="confirm" />
-  </div>
+      <div class="p-float-label p-mt-6">
+      	<Password v-model="user.password" :feedback="false" toggleMask id="pwd"/>
+      	<label for="pwd">Пароль</label>
+      </div>
 
-  <!-- <el-form label-width="120px" ref="formRef" :model="user" :inline="true" :rules="rules">
-    <el-form-item prop="email">
-      <el-input placeholder="E-mail" v-model="user.email"></el-input>
-    </el-form-item>
-    <el-form-item prop="password">
-      <el-input type="password" placeholder="Пароль" v-model="user.password" autocomplete="off"></el-input>
-    </el-form-item>
-    <el-button type="primary" @click="confirm">Войти</el-button>
-    <div class="error">{{error}}</div>
-  </el-form> -->
+      <div class="p-mt-6">
+        <Button label="Войти" @click="confirm" />
+      </div>
+
+    </form>
   </div>
+</div>
 </template>
 
 <script lang="ts">
@@ -43,7 +39,7 @@ export default defineComponent({
     //   formRef.value?.resetFields();
     // };
     const confirm = async () => {
-        console.log("user/pass");
+        console.log("user/pass", user);
       // formRef.value?.validate(async(valid) => {
       //   if (valid) {
       //     console.log("ok send", user);

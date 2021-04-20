@@ -72,4 +72,5 @@ import { reactive, ref, onMounted } from 'vue';
 export default {
     setup() {
     }
+  }
 </script>

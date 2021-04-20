@@ -19,6 +19,13 @@
         <Button label="Войти" @click="confirm" />
       </div>
 
+      <Divider />
+      
+      <div class="p-mt-4 p-shadow-10 p-p-4 ">
+        Нет учётной записи? Создать её можно
+        <router-link to="/register">здесь</router-link>.
+      </div>
+
     </form>
   </div>
 </div>

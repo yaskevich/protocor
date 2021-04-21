@@ -73,6 +73,28 @@ const __dirname = path.dirname(__filename);
 		res.json({ "message": "ok" });
 	});
 
+	app.post('/api/text', async(req, res) => {
+		console.log("POST", req.body);
+		if (req.body.id) {
+			const params = {
+				"mode": req.body.corpus || "main",
+				"text": "document-info",
+				"docid": req.body.id
+			};
+
+			try {
+	    	const response = await axios.get('https://processing.ruscorpora.ru/search-explan.xml', { params: params });
+	    	// console.log(response);
+				res.json(response.data);
+		  } catch (error) {
+		    console.error(error);
+				res.json({ "error": error });
+		  }
+		} else {
+				res.json({ "error": "empty query" });
+		}
+	});
+
 	app.post('/api/query', async(req, res) => {
 		console.log("POST", req.body);
 		if (req.body.token) {
@@ -85,9 +107,9 @@ const __dirname = path.dirname(__filename);
 				"mysentsize": "",
 				"dpp": req.body.dpp || 50, // documents per page
 				"spp": "", // snippets per page
-				"spd": req.body.spd || 2, // snippets per doctument
+				"spd": req.body.spd || 2, // snippets per document
 				"mydocsize": "",
-				"mode": "main",
+				"mode": req.body.corpus || "main",
 				"lang": "ru",
 				"sort": "i_grtagging",
 				"nodia": "1",

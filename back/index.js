@@ -75,7 +75,7 @@ const __dirname = path.dirname(__filename);
 
 	app.post('/api/freq', async(req, res) => {
 		console.log("POST", req.body);
-		if (req.body.id) {
+		if (req.body.token) {
 			const params = {
 				"mode": req.body.corpus || "main",
         "lang": "ru",
@@ -101,8 +101,8 @@ const __dirname = path.dirname(__filename);
 
 			try {
 	    	const response = await axios.get('https://processing.ruscorpora.ru/graphic.xml', { params: params });
-	    	// console.log(response);
-				res.json({ "freq": response.data.values.data });
+	    	// console.log(response.data.values[0].data);
+				res.json({ "freq": response.data.values[0].data});
 		  } catch (error) {
 		    console.error(error);
 				res.json({ "error": error });

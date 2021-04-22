@@ -16,6 +16,7 @@
   <div class="p-d-flex p-jc-center p-mb-4">
     <InputText type="text" v-model="params.token" @keyup.enter="onSubmit($event)"/>
     <Button label="Искать" @click="onSubmit($event)" :disabled="!params.token ? 'disabled': null"/>
+    <Button label="График" @click="renderChart" class="p-button-success p-ml-2" :disabled="!params.token ? 'disabled': null"/>
   </div>
 
 
@@ -75,6 +76,22 @@ export default {
     // onBeforeMount(async() => {
     // });
 
+    const renderChart = async(e) => {
+      if(params.token){
+        try {
+          const config = {
+             // headers: { Authorization: "Bearer " + state.token },
+           };
+          const response = await axios.post("/api/freq", params,); // config);
+          // resp.value = response.data;
+          console.log("chart", response.data);
+        } catch (error) {
+          console.log("Cannot get data via API", error)
+          return error;
+        }
+      }
+    };
+
     const onSubmit = async(e) => {
       // console.log(e);
       if (e?.originalEvent?.target?.id) {
@@ -94,8 +111,6 @@ export default {
       console.log("data", params);
 
       if(params.token){
-
-
         try {
           const config = {
              // headers: { Authorization: "Bearer " + state.token },
@@ -122,7 +137,7 @@ export default {
      displayModal.value = false;
    };
 
-    return { onSubmit, resp, params, rules, displayModal, openModal, closeModal, modalContent};
+    return { onSubmit, resp, params, rules, displayModal, openModal, closeModal, modalContent, renderChart, };
   },
   // components: {
   //

@@ -73,6 +73,45 @@ const __dirname = path.dirname(__filename);
 		res.json({ "message": "ok" });
 	});
 
+	app.post('/api/freq', async(req, res) => {
+		console.log("POST", req.body);
+		if (req.body.id) {
+			const params = {
+				"mode": req.body.corpus || "main",
+        "lang": "ru",
+        "sort": "i_grtagging",
+        "sr": "1",
+        "lex1": req.body.token,
+        "g": "i_doc",
+        "startyear": "1800",
+        "dpp": "10",
+        "spp": "10",
+        "text": "lexgramm",
+        "smoothing": "3",
+        "level1": "0",
+        "graphic_from_result": "1",
+        "endyear": "2019",
+        "parent1": "0",
+        "nodia": "1",
+        "sem-mod1": "sem",
+        "spd": "10",
+        "out": "normal",
+        "format": "json",
+      };
+
+			try {
+	    	const response = await axios.get('https://processing.ruscorpora.ru/graphic.xml', { params: params });
+	    	// console.log(response);
+				res.json({ "freq": response.data.values.data });
+		  } catch (error) {
+		    console.error(error);
+				res.json({ "error": error });
+		  }
+		} else {
+				res.json({ "error": "empty query" });
+		}
+	});
+
 	app.post('/api/text', async(req, res) => {
 		console.log("POST", req.body);
 		if (req.body.id) {
@@ -116,7 +155,7 @@ const __dirname = path.dirname(__filename);
 				"text": "lexgramm",
 				"parent1": 0,
 				"level1": 0,
-				"lex1": req.body.token, // "кот",
+				"lex1": req.body.token,
 				"gramm1": "",
 				"sem1": "",
 				"flags1": "",

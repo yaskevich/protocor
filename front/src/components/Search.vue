@@ -18,6 +18,8 @@
     <Button label="Искать" @click="onSubmit($event)" :disabled="!params.token ? 'disabled': null"/>
   </div>
 
+
+
   <div v-if="resp.hasOwnProperty('corp_stat')">
     <div class="">Корпус: {{resp.corp_stat.stats[1].num}} слов, {{resp.corp_stat.stats[0].num}} документов</div>
     <div>Найдено: {{resp.found_stat.stats[1].num}} вхождений, {{resp.found_stat.stats[0].num}} документов</div>
@@ -28,10 +30,20 @@
           {{word.text}}
         </span>
       </div>
-      <span class="source-title p-pr-2">{{value.document_info.title}}</span>
+      <span class="source-title p-pr-2">{{value.document_info.title}}
+        <Button icon="pi pi-search" class="p-button-rounded p-button-primary p-button-text mini-button"  @click="openModal(value.document_info.id)" /> </span>
       <span class="note">{{value.document_info.homonymy}}</span>
     </div>
   </div>
+
+  <Dialog header="Header" v-model:visible="displayModal" :style="{width: '50vw'}" :modal="false">
+    <p class="p-m-0"></p>
+    {{modalContent}}
+    <!-- <template #footer>
+        <Button label="No" icon="pi pi-times" @click="closeModal" class="p-button-text"/>
+        <Button label="Yes" icon="pi pi-check" @click="closeModal" autofocus />
+    </template> -->
+</Dialog>
 </template>
 <script>
 import { ref, reactive } from 'vue';
@@ -50,6 +62,8 @@ export default {
 
     // const vuerouter = useRoute();
     // const id = vuerouter.params.id;
+
+    const modalContent  = ref('');
     const resp = ref({});
     const params = store.state.search;
     console.log("init params", params);
@@ -95,7 +109,20 @@ export default {
       }
     };
 
-    return { onSubmit, resp, params, rules };
+    const displayModal = ref(false);
+    const openModal = async(id) => {
+        console.log("id", id);
+        const response = await axios.post("/api/text", {"id": id});
+        // console.log(response.data);
+        modalContent.value = response.data;
+        displayModal.value = true;
+    };
+
+    const closeModal = () => {
+     displayModal.value = false;
+   };
+
+    return { onSubmit, resp, params, rules, displayModal, openModal, closeModal, modalContent};
   },
   // components: {
   //
@@ -123,5 +150,14 @@ export default {
 }
 .num-input{
   width: 3rem;
+}
+
+.mini-button {
+  height: 1rem !important;
+  width: 1rem !important;
+}
+.mini-button > .pi{
+  font-size: 0.75rem;
+
 }
 </style>

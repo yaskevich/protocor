@@ -39,7 +39,7 @@
     </div>
   </div>
 
-  <Dialog header="Header" v-model:visible="displayModal" :style="{width: '50vw'}" :modal="false">
+  <Dialog header="Header" v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '100vw'}" :style="{width: '50vw'}" :modal="false">
     <p class="p-m-0"></p>
     {{modalContent}}
     <!-- <template #footer>

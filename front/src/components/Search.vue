@@ -19,13 +19,15 @@
     <Button label="График" @click="renderChart" class="p-button-success p-ml-2" :disabled="!params.token ? 'disabled': null"/>
   </div>
 
+  <div class="chart-holder">
+    <Chart :data="freq" />
+  </div>
 
-
-  <div v-if="resp.hasOwnProperty('corp_stat')">
+  <div v-if="resp.hasOwnProperty('corp_stat')" class="p-mt-4">
     <div class="">Корпус: {{resp.corp_stat.stats[1].num}} слов, {{resp.corp_stat.stats[0].num}} документов</div>
     <div>Найдено: {{resp.found_stat.stats[1].num}} вхождений, {{resp.found_stat.stats[0].num}} документов</div>
-
-    <div v-for="(value, key) in resp.documents" class="p-mt-4 doc p-p-2 p-shadow-3">
+    <Divider />
+    <div v-for="(value, key) in resp.documents" class="p-mt-1 doc p-p-2 p-shadow-3">
       <div v-for="(snippet, index) in value.snippets" class="p-mt-2 snippet">
         <span v-for="(word, num) in snippet.words" :class="word.hit?'hit':''">
           {{word.text}}
@@ -53,6 +55,7 @@ import { ref, reactive } from 'vue';
 // import { useRoute } from 'vue-router';
 import axios from "axios";
 import store from "../store";
+import Chart from "../components/Chart.vue";
 
 export default {
   name: "Search",
@@ -67,6 +70,8 @@ export default {
     const modalContent  = ref('');
     const resp = ref({});
     const params = store.state.search;
+    // const freq = ref([]);
+    const freq = ref([10, 40, 15, 25, 50, 10]);
     console.log("init params", params);
     const rules = {
       dpp: { min: 1, max: 100 },
@@ -85,6 +90,7 @@ export default {
           const response = await axios.post("/api/freq", params,); // config);
           // resp.value = response.data;
           console.log("chart", response.data);
+          freq.value = response.data["freq"].map(x => x[1]);
         } catch (error) {
           console.log("Cannot get data via API", error)
           return error;
@@ -127,21 +133,26 @@ export default {
     const displayModal = ref(false);
     const openModal = async(id) => {
         console.log("id", id);
-        const response = await axios.post("/api/text", {"id": id});
-        // console.log(response.data);
-        modalContent.value = response.data;
-        displayModal.value = true;
+        try{
+          const response = await axios.post("/api/text", {"id": id});
+          // console.log(response.data);
+          modalContent.value = response.data;
+          displayModal.value = true;
+        } catch (error) {
+          console.log("Cannot get data via API", error)
+          return error;
+        }
     };
 
     const closeModal = () => {
      displayModal.value = false;
    };
 
-    return { onSubmit, resp, params, rules, displayModal, openModal, closeModal, modalContent, renderChart, };
+    return { onSubmit, resp, params, rules, displayModal, openModal, closeModal, modalContent, renderChart, freq, };
   },
-  // components: {
-  //
-  // }
+  components: {
+    Chart,
+  }
 };
 </script>
 <style>
@@ -174,5 +185,23 @@ export default {
 .mini-button > .pi{
   font-size: 0.75rem;
 
+}
+
+.chart-holder {
+  text-align: center;
+  color: #2c3e50;
+  max-width: 720px;
+  margin: 10px auto;
+  padding: 0 20px;
+}
+svg {
+  /* important for responsiveness */
+  display: block;
+  fill: none;
+  stroke: none;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  background: #eee;
 }
 </style>

@@ -11,7 +11,7 @@
 import { onMounted, ref, watchEffect } from "vue";
 import * as d3 from "d3";
 import useResizeObserver from "@/resize";
-// thanks muratkemaldar:
+// thanks muratkemaldar: https://github.com/muratkemaldar/using-vue3-with-d3
 
 export default {
   name: "Chart",
@@ -31,12 +31,12 @@ export default {
         const xScale = d3.scaleLinear()
           .domain([0, props.data.length - 1])
           .range([0, width]);
-        const yScale = scaleLinear()
+        const yScale = d3.scaleLinear()
           .domain([d3.min(props.data), d3.max(props.data)])
           .range([height, 0]);
         // line generator: D3 method to transform an array of values to data points ("d") for a path element
         const lineGen = d3.line()
-          .curve(curveBasis)
+          .curve(d3.curveBasis)
           .x((value, index) => xScale(index))
           .y((value) => yScale(value));
         // render path element with D3's General Update Pattern

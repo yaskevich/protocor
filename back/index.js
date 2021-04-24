@@ -49,6 +49,54 @@ const __dirname = path.dirname(__filename);
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(express.static('public'));
 
+	const getResults = async(token, corpus, dpp, spd, page) => {
+		const params = {
+			"env": "alpha",
+			"api": "1.0",
+			"mycorp": "",
+			"mysent": "",
+			"mysize": "",
+			"mysentsize": "",
+			"dpp": dpp || 50, // documents per page
+			"spp": "", // snippets per page
+			"spd": spd || 2, // snippets per document
+			"mydocsize": "",
+			"mode": corpus || "main",
+			"lang": "ru",
+			"sort": "i_grtagging",
+			"nodia": "1",
+			"text": "lexgramm",
+			"parent1": 0,
+			"level1": 0,
+			"lex1": token,
+			"gramm1": "",
+			"sem1": "",
+			"flags1": "",
+			"sem-mod1": "sem",
+			"sem-mod1": "sem2",
+			"parent2": 0,
+			"level2": 0,
+			"min2": 1,
+			"max2": 1,
+			"lex2": "",
+			"gramm2": "",
+			"sem2": "",
+			"flags2": "",
+			"sem-mod2": "sem",
+			"sem-mod2": "sem2",
+			"format": "json",
+			"p": page || 0,
+		};
+		try {
+			const response = await axios.get('https://processing.ruscorpora.ru/search.xml', { params: params });
+			// console.log(response);
+			return response.data;
+		} catch (error) {
+			console.error(error);
+			return;
+		}
+	};
+
 	app.post('/api/login', async(req, res) => {
 		// const userData = await db.getUserData(req.body["email"], req.body["password"]);
 		// if (userData && Object.keys(userData).length && !userData.hasOwnProperty("error") ) {
@@ -135,52 +183,23 @@ const __dirname = path.dirname(__filename);
 	});
 
 	app.post('/api/query', async(req, res) => {
-		console.log("POST", req.body);
+		console.log("POST [query]", req.body);
 		if (req.body.token) {
-			const params = {
-				"env": "alpha",
-				"api": "1.0",
-				"mycorp": "",
-				"mysent": "",
-				"mysize": "",
-				"mysentsize": "",
-				"dpp": req.body.dpp || 50, // documents per page
-				"spp": "", // snippets per page
-				"spd": req.body.spd || 2, // snippets per document
-				"mydocsize": "",
-				"mode": req.body.corpus || "main",
-				"lang": "ru",
-				"sort": "i_grtagging",
-				"nodia": "1",
-				"text": "lexgramm",
-				"parent1": 0,
-				"level1": 0,
-				"lex1": req.body.token,
-				"gramm1": "",
-				"sem1": "",
-				"flags1": "",
-				"sem-mod1": "sem",
-				"sem-mod1": "sem2",
-				"parent2": 0,
-				"level2": 0,
-				"min2": 1,
-				"max2": 1,
-				"lex2": "",
-				"gramm2": "",
-				"sem2": "",
-				"flags2": "",
-				"sem-mod2": "sem",
-				"sem-mod2": "sem2",
-				"format": "json"
-			};
-			try {
-	    const response = await axios.get('https://processing.ruscorpora.ru/search.xml', { params: params });
-	    // console.log(response);
-			res.json(response.data);
-		  } catch (error) {
-		    console.error(error);
-				res.json({ "error": error });
-		  }
+				let pageCurrent = 0;
+				let pageLast  = 1;
+				const returnResults  = { "corp_stat": {}, "found_stat": {}, "documents": [], };
+				while(pageCurrent !== pageLast) {
+						const results = await getResults(req.body.token, req.body.corpus, req.body.dpp, req.body.spd, pageCurrent);
+						if(results) {
+							pageCurrent = results["pager_info"]["current_page_num"];
+							pageLast  = results["pager_info"]["last_page_num"];
+							returnResults["corp_stat"] = results["corp_stat"];
+							returnResults["found_stat"] = results["found_stat"];
+							returnResults.documents.push(...results.documents);
+							console.log(`${pageCurrent} of ${pageLast} pages`);
+						}
+				}
+				res.json(returnResults);
 		} else {
 				res.json({ "error": "empty query" });
 		}

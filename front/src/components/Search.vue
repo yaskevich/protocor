@@ -17,7 +17,7 @@
     <InputText type="text" v-model="params.token" @keyup.enter="onSubmit($event)"/>
     <!-- <Button label="Искать" @click="onSubmit($event)" :disabled="!params.token ? 'disabled': null"/> -->
     <SplitButton label="Искать" @click="onSubmit" :model="buttonItems" :disabled="!params.token ? 'disabled': null"></SplitButton>
-    <Button label="График" @click="renderChart" class="p-button-success p-ml-2" :disabled="!params.token ? 'disabled': null"/>
+    <Button icon="pi pi-chart-line" @click="renderChart" class="p-button-success p-ml-2" :disabled="!params.token ? 'disabled': null"/>
   </div>
 
   <div class="chart-holder">

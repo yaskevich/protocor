@@ -53,10 +53,10 @@ export default {
             .attr("d", lineGen);
           // render axes with help of scales
           const xAxis = d3.axisBottom(xScale).tickFormat((d,i) => {
-            console.log(d, i);
+            // console.log(d, i);
             return d + props.start
           });
-          
+
           svg
             .select(".x-axis")
             .style("transform", `translateY(${height}px)`) // position on the bottom

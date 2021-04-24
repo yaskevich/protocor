@@ -21,7 +21,7 @@
   </div>
 
   <div class="chart-holder">
-    <Chart :data="freq" />
+    <Chart :data="freq.data" :start="freq.start" :end="freq.end" />
   </div>
 
   <div v-if="resp.hasOwnProperty('corp_stat')" class="p-mt-4">
@@ -64,15 +64,13 @@ export default {
   //    datum: Object,
   // },
   setup() {
-
     // const vuerouter = useRoute();
     // const id = vuerouter.params.id;
-
     const modalContent  = ref('');
     const resp = ref({});
     const params = store.state.search;
     // const freq = ref([]);
-    const freq = ref([10, 40, 15, 25, 50, 10]);
+    const freq = reactive({"data": [], "start": 1800, "end": 2021});
     console.log("init params", params);
     const rules = {
       dpp: { min: 1, max: 50 },
@@ -91,15 +89,15 @@ export default {
           const response = await axios.post("/api/freq", params,); // config);
           // resp.value = response.data;
           console.log("chart", response.data);
-          freq.value = response.data["freq"].map(x => x[1]);
+          freq.start  = Number(response.data["freq"][0][0]);
+          freq.end = Number(response.data["freq"].slice(-1)[0][0]);
+          freq.data = response.data["freq"].map(x => x[1]);
         } catch (error) {
           console.log("Cannot get data via API", error)
           return error;
         }
       }
     };
-
-
 
     const performQuery = async(isFull) => {
       if(params.token){

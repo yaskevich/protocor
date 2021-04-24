@@ -29,7 +29,7 @@ export default {
       // whenever any dependencies (like data, resizeState) change, call this!
       watchEffect(() => {
         if (props.data.length) {
-          svg.style("visibility", "visible");
+          svg.style("display", "block");
           const { width, height } = resizeState.dimensions;
           // scales: map index / data values to pixel values on x-axis / y-axis
           const xScale = d3.scaleLinear()
@@ -65,7 +65,7 @@ export default {
           svg.select(".y-axis").call(yAxis);
         } else {
           console.log("chart is empty");
-          svg.style("visibility", "hidden");
+          svg.style("display", "none");
         }
       });
     });

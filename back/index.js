@@ -166,7 +166,8 @@ const __dirname = path.dirname(__filename);
 			const params = {
 				"mode": req.body.corpus || "main",
 				"text": "document-info",
-				"docid": req.body.id
+				"docid": req.body.id,
+				"format": "json",
 			};
 
 			try {
@@ -197,6 +198,7 @@ const __dirname = path.dirname(__filename);
 							returnResults["found_stat"] = results["found_stat"];
 							returnResults.documents.push(...results.documents);
 							console.log(`${pageCurrent} of ${pageLast} pages`);
+							if(!req.body.full) { break; }
 						}
 				}
 				res.json(returnResults);

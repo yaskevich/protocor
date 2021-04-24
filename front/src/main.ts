@@ -25,12 +25,14 @@ import TabPanel from 'primevue/tabpanel';
 import Dropdown from 'primevue/dropdown';
 import Badge from 'primevue/badge';
 import ScrollTop from 'primevue/scrolltop';
+import SplitButton from 'primevue/splitbutton';
 
 createApp(App)
   .use(PrimeVue)
   .use(router)
   .component('Dialog', Dialog)
   .component('Button', Button)
+  .component('SplitButton', SplitButton)
   .component('InputText', InputText)
   .component('InputNumber', InputNumber)
   .component('ScrollTop', ScrollTop)

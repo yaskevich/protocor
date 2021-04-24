@@ -15,7 +15,8 @@
   <div class="p-d-flex p-jc-center p-mb-4">Запрос: <span class="p-text-bold p-pl-2">{{params.token}}</span></div>
   <div class="p-d-flex p-jc-center p-mb-4">
     <InputText type="text" v-model="params.token" @keyup.enter="onSubmit($event)"/>
-    <Button label="Искать" @click="onSubmit($event)" :disabled="!params.token ? 'disabled': null"/>
+    <!-- <Button label="Искать" @click="onSubmit($event)" :disabled="!params.token ? 'disabled': null"/> -->
+    <SplitButton label="Искать" @click="onSubmit" :model="buttonItems" :disabled="!params.token ? 'disabled': null"></SplitButton>
     <Button label="График" @click="renderChart" class="p-button-success p-ml-2" :disabled="!params.token ? 'disabled': null"/>
   </div>
 
@@ -74,8 +75,8 @@ export default {
     const freq = ref([10, 40, 15, 25, 50, 10]);
     console.log("init params", params);
     const rules = {
-      dpp: { min: 1, max: 100 },
-      spd: { min: 1, max: 100 },
+      dpp: { min: 1, max: 50 },
+      spd: { min: 1, max: 50 },
     }
 
     // onBeforeMount(async() => {
@@ -91,6 +92,23 @@ export default {
           // resp.value = response.data;
           console.log("chart", response.data);
           freq.value = response.data["freq"].map(x => x[1]);
+        } catch (error) {
+          console.log("Cannot get data via API", error)
+          return error;
+        }
+      }
+    };
+
+
+
+    const performQuery = async(isFull) => {
+      if(params.token){
+        try {
+          const config = {
+             // headers: { Authorization: "Bearer " + state.token },
+           };
+          const response = await axios.post("/api/query", {...params, "full": isFull? 1 : '' },); // config);
+          resp.value = response.data;
         } catch (error) {
           console.log("Cannot get data via API", error)
           return error;
@@ -115,19 +133,8 @@ export default {
       localStorage.setItem('dpp', params.dpp);
 
       console.log("data", params);
+      await performQuery();
 
-      if(params.token){
-        try {
-          const config = {
-             // headers: { Authorization: "Bearer " + state.token },
-           };
-          const response = await axios.post("/api/query", params,); // config);
-          resp.value = response.data;
-        } catch (error) {
-          console.log("Cannot get data via API", error)
-          return error;
-        }
-      }
     };
 
     const displayModal = ref(false);
@@ -147,8 +154,9 @@ export default {
     const closeModal = () => {
      displayModal.value = false;
    };
+   const buttonItems = [{ label: 'Выгрузить всё', icon: 'pi pi-refresh', command: async () => await performQuery(true) },]
 
-    return { onSubmit, resp, params, rules, displayModal, openModal, closeModal, modalContent, renderChart, freq, };
+    return { onSubmit, resp, params, rules, displayModal, openModal, closeModal, modalContent, renderChart, freq, buttonItems, };
   },
   components: {
     Chart,

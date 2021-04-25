@@ -32,8 +32,8 @@
   </div>
 
   <div v-if="resp.hasOwnProperty('corp_stat')" class="p-mt-4">
-    <div class="">Корпус: {{resp.corp_stat.stats[1].num}} слов, {{resp.corp_stat.stats[0].num}} документов</div>
-    <div>Найдено: {{resp.found_stat.stats[1].num}} вхождений, {{resp.found_stat.stats[0].num}} документов</div>
+    <div class="">Корпус: {{store.space000(resp.corp_stat.stats[1].num)}} слов, {{store.space000(resp.corp_stat.stats[0].num)}} документов</div>
+    <div>Найдено: {{store.space000(resp.found_stat.stats[1].num)}} вхождений, {{store.space000(resp.found_stat.stats[0].num)}} документов</div>
     <Divider />
     <div v-for="(value, key) in resp.documents" class="p-mt-1 doc p-p-2 p-shadow-3">
       <div v-for="(snippet, index) in value.snippets" class="p-mt-2 snippet">
@@ -142,7 +142,7 @@ export default {
         }
         tokens.unshift(params.token);
       }
-      
+
       localStorage.setItem('token', params.token);
       localStorage.setItem('spd', params.spd);
       localStorage.setItem('dpp', params.dpp);
@@ -169,7 +169,7 @@ export default {
    };
    const buttonItems = [{ label: 'Выгрузить всё', icon: 'pi pi-refresh', command: async () => await performQuery(true) },]
 
-    return { onSubmit, resp, params, rules, displayModal, openModal, closeModal, modalContent, renderChart, freq, buttonItems, tokens, };
+    return { onSubmit, resp, params, rules, displayModal, openModal, closeModal, modalContent, renderChart, freq, buttonItems, tokens, store, };
   },
   components: {
     Chart,

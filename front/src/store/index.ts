@@ -18,6 +18,9 @@ const logout = async() => {
   state.user  = {};
 }
 
+
+const space000 = (x: String) =>  x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
 const getUser = async() => {
     if(state.key) {
       try {
@@ -124,6 +127,7 @@ export default {
   postData,
   getUser,
   doLogin,
+  space000,
   // initUser,
   // getData,
   // deleteById,

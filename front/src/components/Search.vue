@@ -1,6 +1,6 @@
 <template>
   <div class="p-field">
-    <span v-for="item in tokens">
+    <span v-for="item in user.queries">
       <!-- v-if="item !== params.token" -->
       <Button :label="item" class="p-button-sm p-button-plain p-button-text p-button-raised" @click="params.token = item; onSubmit($event);"/>
     </span>
@@ -78,7 +78,7 @@ export default {
     const params = store.state.search;
     // const freq = ref([]);
     const freq = reactive({"data": [], "start": 1800, "end": 2021});
-    const tokens = reactive([]);
+    const user = store.state.user;
     console.log("init params", params);
     const rules = {
       dpp: { min: 1, max: 50 },
@@ -135,12 +135,13 @@ export default {
         }
       }
 
-      if(e && tokens[0] !== params.token) {
-        const index = tokens.indexOf(params.token);
+      if(e && user.queries[0] !== params.token) {
+        const index = user.queries.indexOf(params.token);
         if (index !== -1) {
-          tokens.splice(index, 1);
+          user.queries.splice(index, 1);
         }
-        tokens.unshift(params.token);
+        user.queries.unshift(params.token);
+        localStorage.setItem('queries', JSON.stringify(user.queries));
       }
 
       localStorage.setItem('token', params.token);
@@ -169,7 +170,7 @@ export default {
    };
    const buttonItems = [{ label: 'Выгрузить всё', icon: 'pi pi-refresh', command: async () => await performQuery(true) },]
 
-    return { onSubmit, resp, params, rules, displayModal, openModal, closeModal, modalContent, renderChart, freq, buttonItems, tokens, store, };
+    return { onSubmit, resp, params, rules, displayModal, openModal, closeModal, modalContent, renderChart, freq, buttonItems, user, store, };
   },
   components: {
     Chart,

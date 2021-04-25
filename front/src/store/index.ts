@@ -4,7 +4,9 @@ import axios from "axios";
 
 const state = reactive({
   key: localStorage.getItem('key') || '',
-  user: {},
+  user: {
+        queries: JSON.parse(localStorage.getItem('queries') || "[]"),
+  },
   search: {
     token: localStorage.getItem('token') || '',
     spd: Number(localStorage.getItem('spd')) || 10,
@@ -15,7 +17,7 @@ const state = reactive({
 
 const logout = async() => {
   localStorage.setItem("key", "");
-  state.user  = {};
+  state.user  = {queries:[]};
 }
 
 

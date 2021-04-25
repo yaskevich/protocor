@@ -21,9 +21,11 @@ export default {
     const svgRef = ref(null);
     // create another ref to observe resizing, since observing SVGs doesn't work!
     const { resizeRef, resizeState } = useResizeObserver();
+    // var t = d3.transition()
+    //     .duration(750)
+    //     .ease(d3.easeLinear);
+
     onMounted(() => {
-
-
       // pass ref with DOM element to D3, when mounted (DOM available)
       const svg = d3.select(svgRef.value);
       // whenever any dependencies (like data, resizeState) change, call this!
@@ -39,6 +41,11 @@ export default {
             .domain([d3.min(props.data), d3.max(props.data)])
             .range([height, 0]);
           // line generator: D3 method to transform an array of values to data points ("d") for a path element
+          const lineZero  =  d3.line()
+            .curve(d3.curveBasis)
+            .x((value, index) => xScale(index))
+            .y(height);
+            // for stroke-dash interpolation: https://observablehq.com/@jurestabuc/animated-line-chart
           const lineGen = d3.line()
             .curve(d3.curveBasis)
             .x((value, index) => xScale(index))
@@ -50,6 +57,10 @@ export default {
             .join("path")
             .attr("class", "line")
             .attr("stroke", "green")
+            .attr("d", lineZero)
+            .transition()
+            .duration(1000) // duration of the animation
+            .delay(200)
             .attr("d", lineGen);
           // render axes with help of scales
           const xAxis = d3.axisBottom(xScale).tickFormat((d,i) => {

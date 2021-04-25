@@ -129,10 +129,8 @@ export default {
       localStorage.setItem('token', params.token);
       localStorage.setItem('spd', params.spd);
       localStorage.setItem('dpp', params.dpp);
-
       console.log("data", params);
-      await performQuery();
-
+      await Promise.all([performQuery(), renderChart()]);
     };
 
     const displayModal = ref(false);

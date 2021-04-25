@@ -1,5 +1,12 @@
 <template>
   <div class="p-field">
+    <span v-for="item in tokens">
+      <!-- v-if="item !== params.token" -->
+      <Button :label="item" class="p-button-sm p-button-plain p-button-text p-button-raised" @click="params.token = item; onSubmit($event);"/>
+    </span>
+  </div>
+
+  <div class="p-field">
      <label for="spd" class="p-pr-2">Примеров на документ</label>
      <!-- decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success"  -->
      <InputNumber inputClass="num-input" id="spd" v-model="params.spd" showButtons buttonLayout="horizontal" :step="1"
@@ -71,6 +78,7 @@ export default {
     const params = store.state.search;
     // const freq = ref([]);
     const freq = reactive({"data": [], "start": 1800, "end": 2021});
+    const tokens = reactive([]);
     console.log("init params", params);
     const rules = {
       dpp: { min: 1, max: 50 },
@@ -126,6 +134,15 @@ export default {
           params[e.originalEvent.target.id] = e.value;
         }
       }
+
+      if(e && tokens[0] !== params.token) {
+        const index = tokens.indexOf(params.token);
+        if (index !== -1) {
+          tokens.splice(index, 1);
+        }
+        tokens.unshift(params.token);
+      }
+      
       localStorage.setItem('token', params.token);
       localStorage.setItem('spd', params.spd);
       localStorage.setItem('dpp', params.dpp);
@@ -152,7 +169,7 @@ export default {
    };
    const buttonItems = [{ label: 'Выгрузить всё', icon: 'pi pi-refresh', command: async () => await performQuery(true) },]
 
-    return { onSubmit, resp, params, rules, displayModal, openModal, closeModal, modalContent, renderChart, freq, buttonItems, };
+    return { onSubmit, resp, params, rules, displayModal, openModal, closeModal, modalContent, renderChart, freq, buttonItems, tokens, };
   },
   components: {
     Chart,

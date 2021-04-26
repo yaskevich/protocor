@@ -31,7 +31,7 @@
       </div>
       <span class="source-title p-pr-2">{{value.document_info.title}}
         <Button icon="pi pi-search" class="p-button-rounded p-button-primary p-button-text mini-button"  @click="openModal(value.document_info.id)" /> </span>
-      <span class="note">{{value.document_info.homonymy}}</span>
+      <span v-if="value.document_info.homonymy !== 'омонимия снята'" class="note">{{value.document_info.homonymy}}</span>
     </div>
   </div>
 

@@ -6,21 +6,9 @@
     </span>
   </div>
 
-  <div class="p-field">
-     <label for="spd" class="p-pr-2">Примеров на документ</label>
-     <!-- decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success"  -->
-     <InputNumber inputClass="num-input" id="spd" v-model="params.spd" showButtons buttonLayout="horizontal" :step="1"
-         incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" :min="rules.spd.min" :max="rules.spd.max"
-         @input="onSubmit($event)" />
-   </div>
-  <div class="p-field">
-     <label for="dpp" class="p-pr-2">Документов на страницу</label>
-     <InputNumber inputClass="num-input" id="dpp" v-model="params.dpp" showButtons buttonLayout="horizontal" :step="1"
-         incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" :min="rules.dpp.min" :max="rules.dpp.max"
-         @input="onSubmit($event)"/>
-   </div>
-  <div class="p-d-flex p-jc-center p-mb-4">Запрос: <span class="p-text-bold p-pl-2">{{params.token}}</span></div>
+  <!-- <div class="p-d-flex p-jc-center p-mb-4">Запрос: <span class="p-text-bold p-pl-2">{{params.token}}</span></div> -->
   <div class="p-d-flex p-jc-center p-mb-4">
+    <Button icon="pi pi-cog" @click="showSettings" class="p-button-secondary" />
     <InputText type="text" v-model="params.token" @keyup.enter="onSubmit($event)"/>
     <!-- <Button label="Искать" @click="onSubmit($event)" :disabled="!params.token ? 'disabled': null"/> -->
     <SplitButton label="Искать" @click="onSubmit" :model="buttonItems" :disabled="!params.token ? 'disabled': null"></SplitButton>
@@ -33,7 +21,7 @@
 
   <div v-if="resp.hasOwnProperty('corp_stat')" class="p-mt-4">
     <div class="">Корпус: {{store.space000(resp.corp_stat.stats[1].num)}} слов, {{store.space000(resp.corp_stat.stats[0].num)}} документов</div>
-    <div>Найдено: {{store.space000(resp.found_stat.stats[1].num)}} вхождений, {{store.space000(resp.found_stat.stats[0].num)}} документов</div>
+    <div>«<span class="p-text-bold">{{params.token}}</span>»: {{store.space000(resp.found_stat.stats[1].num)}} вхождений, {{store.space000(resp.found_stat.stats[0].num)}} документов</div>
     <Divider />
     <div v-for="(value, key) in resp.documents" class="p-mt-1 doc p-p-2 p-shadow-3">
       <div v-for="(snippet, index) in value.snippets" class="p-mt-2 snippet">
@@ -55,6 +43,24 @@
         <Button label="Yes" icon="pi pi-check" @click="closeModal" autofocus />
     </template> -->
 </Dialog>
+
+<Dialog header="Настройки выдачи" position="top" v-model:visible="displaySettings" :breakpoints="{'960px': '50vw', '640px': '100vw'}" :style="{width: '25vw'}" :modal="false">
+  <div class="p-field">
+     <label for="spd" class="p-pr-2 p-d-block">Примеров на документ</label>
+     <!-- decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success"  -->
+     <InputNumber inputClass="num-input" id="spd" v-model="params.spd" showButtons buttonLayout="horizontal" :step="1"
+         incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" :min="rules.spd.min" :max="rules.spd.max"
+         @input="onSubmit($event)" />
+   </div>
+   <Divider/>
+  <div class="p-field">
+     <label for="dpp" class="p-pr-2 p-d-block">Документов на страницу</label>
+     <InputNumber inputClass="num-input" id="dpp" v-model="params.dpp" showButtons buttonLayout="horizontal" :step="1"
+         incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" :min="rules.dpp.min" :max="rules.dpp.max"
+         @input="onSubmit($event)"/>
+   </div>
+</Dialog>
+
 </template>
 <script>
 import { ref, reactive } from 'vue';
@@ -152,6 +158,12 @@ export default {
     };
 
     const displayModal = ref(false);
+    const displaySettings = ref(false);
+
+    const showSettings = () => {
+        displaySettings.value = true;
+    };
+
     const openModal = async(id) => {
         console.log("id", id);
         try{
@@ -170,7 +182,11 @@ export default {
    };
    const buttonItems = [{ label: 'Выгрузить всё', icon: 'pi pi-refresh', command: async () => await performQuery(true) },]
 
-    return { onSubmit, resp, params, rules, displayModal, openModal, closeModal, modalContent, renderChart, freq, buttonItems, user, store, };
+    return {
+      onSubmit, resp, params, rules, displayModal,
+      openModal, closeModal, modalContent, renderChart, freq,
+      buttonItems, user, store, displaySettings, showSettings,
+    };
   },
   components: {
     Chart,

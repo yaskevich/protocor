@@ -24,7 +24,7 @@
     <div>«<span class="p-text-bold">{{params.token}}</span>»: {{store.space000(resp.found_stat.stats[1].num)}} вхождений, {{store.space000(resp.found_stat.stats[0].num)}} документов</div>
     <Divider />
     <div v-for="(value, key) in resp.documents" class="p-mt-1 doc p-p-2 p-shadow-3">
-      <div v-for="(snippet, index) in value.snippets" class="p-mt-2 snippet">
+      <div v-for="(snippet, index) in value.snippets" class="p-mt-2 p-mb-2 snippet p-p-1">
         <span v-for="(word, num) in snippet.words" :class="word.hit?'hit':''">
           {{word.text}}
         </span>
@@ -195,15 +195,17 @@ export default {
 </script>
 <style>
 .source-title{
+  color: silver;
   /* font-style: italic; */
-  font-size: 0.75rem;
+  /*font-size: 0.75rem; */
 }
 .note{
   color: red;
-  font-size: 0.5rem;
+  /* font-size: 0.75rem; */
 }
 .snippet{
-  border: 1px dashed gray;
+  /* border: 1px dashed gray; */
+  font-size:1.25rem;
 }
 .hit{
   color:darkred;

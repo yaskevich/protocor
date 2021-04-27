@@ -7,8 +7,11 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@fontsource/fira-sans-extra-condensed": "^4.2.3",
+    "axios": "^0.21.1",
     "core-js": "^3.10.1",
     "d3": "^6.6.2",
+    "primeflex": "^2.0.0",
     "primeicons": "^4.1.0",
     "primevue": "^3.3.5",
     "register-service-worker": "^1.7.2",

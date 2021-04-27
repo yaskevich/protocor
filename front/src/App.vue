@@ -44,12 +44,13 @@ export default defineComponent({
 
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+#app, .p-inputtext, .p-component {
+  /* font-family: Avenir, Helvetica, Arial, sans-serif; */
+  font-family: 'Fira Sans Extra Condensed', sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  /* color: #2c3e50; */
 }
 
 #nav {

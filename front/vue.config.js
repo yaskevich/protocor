@@ -8,7 +8,7 @@ module.exports = {
       template: "public/index.html",
       // output as dist/index.html
       filename: "index.html",
-      title: "Protocor"
+      title: "🇷🇺",
     }
   },
 	configureWebpack: {

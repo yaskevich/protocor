@@ -1,7 +1,8 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import './registerServiceWorker'
-import router from './router'
+import { createApp } from 'vue';
+import App from './App.vue';
+import './registerServiceWorker';
+import router from './router';
+import { createHead } from '@vueuse/head';
 import PrimeVue from 'primevue/config';
 import 'primeflex/primeflex.css';
 import 'primevue/resources/themes/saga-blue/theme.css';
@@ -36,6 +37,7 @@ import "@fontsource/fira-sans-extra-condensed/900.css" // Black variant.
 
 createApp(App)
   .use(PrimeVue)
+  .use(createHead())
   .use(router)
   .component('Dialog', Dialog)
   .component('Button', Button)

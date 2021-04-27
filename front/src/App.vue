@@ -15,7 +15,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount, ref } from 'vue';
+import { defineComponent, onBeforeMount, ref, computed, reactive } from 'vue';
+import { useHead } from '@vueuse/head';
 import store from "./store";
 export default defineComponent({
   name: 'App',
@@ -25,6 +26,24 @@ export default defineComponent({
        dataReady.value = true;
        console.log('app → mounted!')
     })
+
+    const siteData = reactive({
+      title: "НКРЯ",
+      // description: "Site of the National Corpus of Russian Language",
+      description: "Сайт Национального корпуса русского языка",
+    });
+
+    useHead({
+      // Can be static or computed
+      title: computed(() => siteData.title),
+      meta: [
+        {
+          name: `description`,
+          content: computed(() => siteData.description),
+        },
+      ],
+    });
+
      console.log("app → setup");
      const dataReady = ref(false);
      // const plusOne = computed(() => count.value + 1)

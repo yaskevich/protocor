@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@fontsource/fira-sans-extra-condensed": "^4.2.3",
+    "@vueuse/head": "^0.5.1",
     "axios": "^0.21.1",
     "core-js": "^3.10.1",
     "d3": "^6.6.2",

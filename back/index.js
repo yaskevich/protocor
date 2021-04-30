@@ -196,7 +196,9 @@ const __dirname = path.dirname(__filename);
 							pageLast  = results["pager_info"]["last_page_num"];
 							returnResults["corp_stat"] = results["corp_stat"];
 							returnResults["found_stat"] = results["found_stat"];
-							returnResults.documents.push(...results.documents);
+							// returnResults.documents.push(...results.documents);
+							// external API was changed !!!
+							returnResults.documents.push(...results.document_groups.flat());
 							console.log(`${pageCurrent} of ${pageLast} pages`);
 							if(!req.body.full) { break; }
 						}

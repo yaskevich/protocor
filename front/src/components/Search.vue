@@ -35,9 +35,17 @@
     </div>
   </div>
 
-  <Dialog header="Header" v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '100vw'}" :style="{width: '50vw'}" :modal="false">
+  <Dialog :header="textInfo.header" v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '100vw'}" :style="{width: '30vw'}" :modal="false">
     <p class="p-m-0"></p>
-    {{modalContent}}
+    <template v-for="(value, key) in l10n">
+      <div class="p-grid p-text-left" v-if="textInfo[key]">
+              <div class="p-col-4 text-property" style="color: gray;">
+                {{value}}</div>
+              <div class="p-col">
+                {{textInfo[key]}}
+              </div>
+      </div>
+    </template>
     <!-- <template #footer>
         <Button label="No" icon="pi pi-times" @click="closeModal" class="p-button-text"/>
         <Button label="Yes" icon="pi pi-check" @click="closeModal" autofocus />
@@ -79,7 +87,7 @@ export default {
   setup() {
     // const vuerouter = useRoute();
     // const id = vuerouter.params.id;
-    const modalContent  = ref('');
+    const textInfo  = ref({});
     const resp = ref({});
     const params = store.state.search;
     // const freq = ref([]);
@@ -89,7 +97,29 @@ export default {
     const rules = {
       dpp: { min: 1, max: 50 },
       spd: { min: 1, max: 50 },
-    }
+    };
+
+    // { "birthday": "", "style": "нейтральный", "subcorpus": "ПК электронной коммуникации", "author": "коллективный", "type": "комментарии", "created": "2006-2010", "audience_size": "большая", "grsphere": "нехудожественная, электронная коммуникация", "header": "Форум: рецензии на фильм «Службный роман»", "medium": "электронный текст", "publ_year": "2006, 2007, 2008, 2009, 2010", "source": "Интернет", "words": "0", "sentences": "502", "title": "Форум: рецензии на фильм «Службный роман»", "audience_age": "н-возраст", "grtopic": "досуг, зрелища и развлечения, искусство и культура", "editor_id": "1", "id": "bWFpbi9zdGFuZGFyZC9wb3N0MTk1MC9mb3J1bS9lbGVjdHJvY29tL3NsdXpoZWJueWpfcm9tYW5fZGlzYW1iLnhtbA==", "tagging": "manual", "audience_level": "н-уровень" }
+
+    const l10n =  {
+      "style": "стиль",
+      "grsphere": "сфера",
+      "grtopic": "тематика",
+      "subcorpus": "подкорпус",
+      "tagging": "разметка",
+      "author": "автор",
+      "birthday": "день рожденья",
+      "type": "тип",
+      "created": "датировка",
+      "medium": "носитель",
+      "source": "источник",
+      "words": "слов",
+      "sentences": "предложений",
+      "audience_size": "аудитория",
+      "audience_age": "возраст",
+      "audience_level": "сложность",
+    };
+
 
     // onBeforeMount(async() => {
     // });
@@ -169,7 +199,7 @@ export default {
         try{
           const response = await axios.post("/api/text", {"id": id});
           // console.log(response.data);
-          modalContent.value = response.data;
+          textInfo.value = response.data;
           displayModal.value = true;
         } catch (error) {
           console.log("Cannot get data via API", error)
@@ -184,8 +214,9 @@ export default {
 
     return {
       onSubmit, resp, params, rules, displayModal,
-      openModal, closeModal, modalContent, renderChart, freq,
+      openModal, closeModal, textInfo, renderChart, freq,
       buttonItems, user, store, displaySettings, showSettings,
+      l10n,
     };
   },
   components: {
@@ -243,5 +274,8 @@ svg {
   height: 100%;
   overflow: visible;
   background: #eee;
+}
+.text-property:first-letter{
+  text-transform: capitalize;
 }
 </style>

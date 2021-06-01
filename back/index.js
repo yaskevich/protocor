@@ -9,7 +9,7 @@ import bodyParser from 'body-parser';
 import passport from 'passport';
 import passportJWT from "passport-jwt";
 import jwt from 'jsonwebtoken';
-// import db from './db.js';
+import db from './db.js';
 
 import search from './search.js';
 import { fileURLToPath } from 'url';
@@ -22,7 +22,7 @@ const __dirname = path.dirname(__filename);
 	const port = process.env.PORT || 3061;
 	const JWTStrategy   = passportJWT.Strategy;
 	const ExtractJWT = passportJWT.ExtractJwt;
-	console.log("cache keys:", search.cache.keysSync());
+	// console.log("cache keys:", search.cache.keysSync());
 
 	const serializeQuery = (method, query) => method.replace(/\//g, '') + Object.entries(query).map( x => x.join('') ).join('');
 

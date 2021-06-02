@@ -78,6 +78,11 @@ const __dirname = path.dirname(__filename);
 		res.json({ "message": "ok" });
 	});
 
+	app.get('/api/grammar', (req, res) => {
+		// remember: remove X in gender (it was added to avoid duplicates in JSON)
+		res.sendFile(path.join(__dirname, "grammar.json"));
+	});
+
 	app.post('/api/text', async(req, res) => {
 		const cacheKey = req.body.id;
 		const datum = await search.getFromCache(req.body.id, cacheKey);

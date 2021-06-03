@@ -10,7 +10,16 @@
   <div class="p-d-flex p-jc-center p-mb-4">
     <Button icon="pi pi-cog" @click="showSettings" class="p-button-secondary" />
     <InputText type="text" v-model="params.token" @keyup.enter="onSubmit($event)"/>
+    <SelectButton v-model="gramMode" :options="gramButtonOptions" @click="clickGramMode">
+      <template #option="slotProps">
+                <i :class="slotProps.option.icon"></i>
+            </template>
+    </SelectButton>
+     <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
+
     <!-- <Button label="Искать" @click="onSubmit($event)" :disabled="!params.token ? 'disabled': null"/> -->
+  </div>
+  <div class="p-d-flex p-jc-center p-mb-4">
     <SplitButton label="Искать" @click="onSubmit" :model="buttonItems" :disabled="!params.token ? 'disabled': null"></SplitButton>
     <Button icon="pi pi-chart-line" @click="renderChart" class="p-button-success p-ml-2" :disabled="!params.token ? 'disabled': null"/>
   </div>
@@ -35,10 +44,10 @@
     </div>
   </div>
 
-  <Dialog :header="textInfo.header" v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '100vw'}" :style="{width: '30vw'}" :modal="false">
+  <Dialog :header="textInfo?.header" v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '100vw'}" :style="{width: '30vw'}" :modal="false">
     <p class="p-m-0"></p>
     <template v-for="(value, key) in l10n">
-      <div class="p-grid p-text-left" v-if="textInfo[key]">
+      <div class="p-grid p-text-left" v-if="textInfo?.[key]">
               <div class="p-col-4 text-property" style="color: gray;">
                 {{value}}</div>
               <div class="p-col">
@@ -78,6 +87,7 @@ import { ref, reactive } from 'vue';
 import axios from "axios";
 import store from "../store";
 import Chart from "../components/Chart.vue";
+import Menu from 'primevue/menu';
 
 export default {
   name: "Search",
@@ -94,6 +104,12 @@ export default {
     const freq = reactive({"data": [], "start": 1800, "end": 2021});
     const user = store.state.user;
     console.log("init params", params);
+    const gramMode = ref();
+    const gramButtonOptions = [
+            {icon: 'pi pi-check', value: 'left'},
+            {icon: 'pi pi-filter', value: 'Right'},
+
+    ];
     const rules = {
       dpp: { min: 1, max: 50 },
       spd: { min: 1, max: 50 },
@@ -119,6 +135,32 @@ export default {
       "audience_age": "возраст",
       "audience_level": "сложность",
     };
+
+    const menu = ref();
+       const items = ref([
+           {
+               label: 'Options',
+               items: [{
+                   label: 'Update',
+                   icon: 'pi pi-refresh',
+               },
+               {
+                   label: 'Delete',
+                   icon: 'pi pi-times',
+               }
+           ]},
+           {
+               label: 'Navigate',
+               items: [{
+                   label: 'Vue Website',
+                   icon: 'pi pi-external-link',
+               },
+               {
+                   label: 'Router',
+                   icon: 'pi pi-upload',
+               }
+           ]}
+       ]);
 
 
     // onBeforeMount(async() => {
@@ -210,17 +252,23 @@ export default {
     const closeModal = () => {
      displayModal.value = false;
    };
+
+   const clickGramMode = (e) => {
+     console.log("e", e, gramMode.value);
+     // gramMode.value = undefined;
+     menu.value.toggle(event);
+   };
    const buttonItems = [{ label: 'Выгрузить всё', icon: 'pi pi-refresh', command: async () => await performQuery(true) },]
 
     return {
       onSubmit, resp, params, rules, displayModal,
       openModal, closeModal, textInfo, renderChart, freq,
       buttonItems, user, store, displaySettings, showSettings,
-      l10n,
+      l10n, gramMode, gramButtonOptions, clickGramMode, items, menu,
     };
   },
   components: {
-    Chart,
+    Chart, Menu,
   }
 };
 </script>

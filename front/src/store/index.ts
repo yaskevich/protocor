@@ -105,26 +105,27 @@ const postData = async(table: string, data: Object): Promise<any> => {
 //  console.log("No key. Fail.");
 // };
 
-// const getData = async(table: string, id?: string): Promise<any> => {
-//   if (state.key) {
-//     try {
-//     const config = { headers: { Authorization: "Bearer " + state.key }, "params": {} };
-//      if(id) { config["params"] = { id: id }; }
-//      console.log("send query", table);
-//      const response = await axios.get("/api/" + table, config);
-//      console.log(response.data);
-//      return response;
-//    } catch (error) {
-//      console.log("Cannot get", error);
-//      return error;
-//    }
-//  }
-//  console.log("No key. Fail.");
-// };
+const getData = async(route: string, id?: string): Promise<any> => {
+  // if (state.key) {
+    try {
+    // const config = { headers: { Authorization: "Bearer " + state.key }, "params": {} };
+     // if(id) { config["params"] = { id: id }; }
+     const config = {};
+     const response = await axios.get("/api/" + route, config);
+     // console.log(response.data);
+     return response.data;
+   } catch (error) {
+     console.log("Cannot get", error);
+     return error;
+   }
+ // }
+ // console.log("No key. Fail.");
+};
 
 
 export default {
   // state: readonly(state),
+  getData,
   logout,
   postData,
   getUser,

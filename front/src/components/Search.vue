@@ -1,6 +1,6 @@
 <template>
   <div class="p-field">
-    <span v-for="item in user.queries">
+    <span v-for="item in user.queries" :key="item">
       <!-- v-if="item !== params.token" -->
       <Button :label="item" class="p-button-sm p-button-plain p-button-text p-button-raised" @click="params.token = item; onSubmit($event);"/>
     </span>
@@ -32,14 +32,17 @@
     <div class="">Корпус: {{store.space000(resp.corp_stat.stats[1].num)}} слов, {{store.space000(resp.corp_stat.stats[0].num)}} документов</div>
     <div>«<span class="p-text-bold">{{params.token}}</span>»: {{store.space000(resp.found_stat.stats[1].num)}} вхождений, {{store.space000(resp.found_stat.stats[0].num)}} документов</div>
     <Divider />
-    <div v-for="(value, key) in resp.documents" class="p-mt-1 doc p-p-2 p-shadow-3">
-      <div v-for="(snippet, index) in value.snippets" class="p-mt-2 p-mb-2 snippet p-p-1">
-        <span v-for="(word, num) in snippet.words" :class="word.hit?'hit':''">
+    <div v-for="(value, key) in resp.documents" class="p-mt-1 doc p-p-2 p-shadow-3" :key="key">
+      <div v-for="(snippet, index) in value.snippets" class="p-mt-2 p-mb-2 snippet p-p-1" :key="index">
+        <span v-for="(word, num) in snippet.words" :class="word.hit?'hit':''" :key="num">
           {{word.text}}
         </span>
+        <Button icon="pi pi-heart" :class="'p-button-rounded mini-button' + (likeContexts.includes(snippet.expand_context_url)?'p-button-success':'p-button-primary p-button-text')"  @click="like(snippet)" />
       </div>
-      <span class="source-title p-pr-2">{{value.document_info.title}}
-        <Button icon="pi pi-search" class="p-button-rounded p-button-primary p-button-text mini-button"  @click="openModal(value.document_info.id)" /> </span>
+      <span class="source-title p-pr-2">
+        {{value.document_info.title}}
+        <Button icon="pi pi-search" class="p-button-rounded p-button-primary p-button-text mini-button"  @click="openModal(value.document_info.id)" />
+      </span>
       <span v-if="value.document_info.homonymy !== 'омонимия снята'" class="note">{{value.document_info.homonymy}}</span>
     </div>
   </div>
@@ -47,7 +50,7 @@
   <Dialog :header="textInfo?.header" v-model:visible="displayModal" :breakpoints="{'960px': '75vw', '640px': '100vw'}" :style="{width: '30vw'}" :modal="false">
     <p class="p-m-0"></p>
     <template v-for="(value, key) in l10n">
-      <div class="p-grid p-text-left" v-if="textInfo?.[key]">
+      <div class="p-grid p-text-left" v-if="textInfo && textInfo[key]" :key="key">
               <div class="p-col-4 text-property" style="color: gray;">
                 {{value}}</div>
               <div class="p-col">
@@ -80,7 +83,7 @@
 
 </template>
 <script>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onBeforeMount, } from 'vue';
 // import { onBeforeMount } from 'vue';
 // import store from "../store";
 // import { useRoute } from 'vue-router';
@@ -97,6 +100,8 @@ export default {
   setup() {
     // const vuerouter = useRoute();
     // const id = vuerouter.params.id;
+    const likeContexts = reactive([]);
+
     const textInfo  = ref({});
     const resp = ref({});
     const params = store.state.search;
@@ -106,9 +111,8 @@ export default {
     console.log("init params", params);
     const gramMode = ref();
     const gramButtonOptions = [
-            {icon: 'pi pi-check', value: 'left'},
-            {icon: 'pi pi-filter', value: 'Right'},
-
+        {icon: 'pi pi-check', value: 'pos'},
+        {icon: 'pi pi-filter', value: 'attrs'},
     ];
     const rules = {
       dpp: { min: 1, max: 50 },
@@ -163,8 +167,16 @@ export default {
        ]);
 
 
-    // onBeforeMount(async() => {
-    // });
+    onBeforeMount(async() => {
+      const grammar  = await store.getData("grammar");
+      // console.log("grammar", grammar);
+      items.value = grammar.gramForm.s.map(x => ({
+        label: grammar.dictionary[x],
+         // icon: 'pi pi-upload',
+      }));
+      console.log("!!", items);
+
+    });
 
     const renderChart = async(e) => {
       if(params.token){
@@ -236,6 +248,11 @@ export default {
         displaySettings.value = true;
     };
 
+    const like = (data) => {
+      console.log("like", data);
+      likeContexts.push(data.expand_context_url);
+    };
+
     const openModal = async(id) => {
         console.log("id", id);
         try{
@@ -265,6 +282,7 @@ export default {
       openModal, closeModal, textInfo, renderChart, freq,
       buttonItems, user, store, displaySettings, showSettings,
       l10n, gramMode, gramButtonOptions, clickGramMode, items, menu,
+      like, likeContexts,
     };
   },
   components: {

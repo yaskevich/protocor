@@ -2,6 +2,7 @@
 <div id="main" v-if="dataReady">
   <div id="nav">
     <router-link to="/">Поиск</router-link> |
+    <router-link to="/trends">Тренды</router-link> |
     <router-link to="/about">Моё</router-link> |
     <span v-if="!loggedIn">
       <router-link to="/login">Войти</router-link>

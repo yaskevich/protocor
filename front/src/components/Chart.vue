@@ -30,7 +30,7 @@ export default {
       const svg = d3.select(svgRef.value);
       // whenever any dependencies (like data, resizeState) change, call this!
       watchEffect(() => {
-        if (props.data.length) {
+        if (props.data?.length) {
           svg.style("display", "block");
           const { width, height } = resizeState.dimensions;
           // scales: map index / data values to pixel values on x-axis / y-axis
@@ -41,27 +41,52 @@ export default {
             .domain([d3.min(props.data), d3.max(props.data)])
             .range([height, 0]);
           // line generator: D3 method to transform an array of values to data points ("d") for a path element
-          const lineZero  =  d3.line()
-            .curve(d3.curveBasis)
-            .x((value, index) => xScale(index))
-            .y(height);
+          // const lineZero  =  d3.line()
+          //   .curve(d3.curveBasis)
+          //   .x((value, index) => xScale(index))
+          //   .y(height);
             // for stroke-dash interpolation: https://observablehq.com/@jurestabuc/animated-line-chart
-          const lineGen = d3.line()
+          const line = d3.line()
+            // .defined(d => !isNaN(d))
             .curve(d3.curveBasis)
             .x((value, index) => xScale(index))
             .y((value) => yScale(value));
           // render path element with D3's General Update Pattern
-          svg
-            .selectAll(".line")
-            .data([props.data]) // pass entire data array
-            .join("path")
-            .attr("class", "line")
-            .attr("stroke", "green")
-            .attr("d", lineZero)
-            .transition()
-            .duration(1000) // duration of the animation
-            .delay(200)
-            .attr("d", lineGen);
+
+
+          var path = svg
+                //.append("path")
+                  .selectAll(".line")
+                  .data([props.data]) // pass entire data array
+                  .join("path")
+                  .datum(props.data)
+                  .attr("class", "line")
+                  .attr("d", line);
+
+              // Variable to Hold Total Length
+              var totalLength = path.node().getTotalLength();
+
+              // Set Properties of Dash Array and Dash Offset and initiate Transition
+              path
+                .attr("stroke-dasharray", totalLength + " " + totalLength)
+                .attr("stroke-dashoffset", totalLength)
+               .transition() // Call Transition Method
+                .duration(2000) // Set Duration timing (ms)
+                .ease(d3.easeLinear) // Set Easing option
+                .attr("stroke-dashoffset", 0); // Set final value of dash-offset for transition
+
+
+          // svg
+          //   .selectAll(".line")
+          //   .data([props.data]) // pass entire data array
+          //   .join("path")
+          //   .attr("class", "line")
+          //   .attr("stroke", "green")
+          //   .attr("d", lineZero)
+          //   .transition()
+          //   .duration(1000) // duration of the animation
+          //   .delay(200)
+          //   .attr("d", lineGen);
           // render axes with help of scales
           const xAxis = d3.axisBottom(xScale).tickFormat((d,i) => {
             // console.log(d, i);
@@ -75,7 +100,7 @@ export default {
           const yAxis = d3.axisLeft(yScale);
           svg.select(".y-axis").call(yAxis);
         } else {
-          console.log("chart is empty");
+          // console.log("chart is empty");
           svg.style("display", "none");
         }
       });
@@ -84,3 +109,19 @@ export default {
   },
 };
 </script>
+
+<style>
+  path.line {
+    stroke: green;
+  }
+  svg {
+    /* important for responsiveness */
+    display: block;
+    fill: none;
+    stroke: none;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    background: #eee;
+  }
+</style>

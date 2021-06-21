@@ -25,7 +25,7 @@
   </div>
 
   <div class="chart-holder">
-    <Chart :data="freq.data" :start="freq.start" :end="freq.end" />
+    <Chart :data="freq.data" :start="freq.start" :end="freq.end" :title="params.token"/>
   </div>
 
   <div v-if="resp.hasOwnProperty('corp_stat')" class="p-mt-4">
@@ -174,7 +174,7 @@ export default {
         label: grammar.dictionary[x],
          // icon: 'pi pi-upload',
       }));
-      console.log("!!", items);
+      // console.log("Grammar items", items);
 
     });
 
@@ -186,7 +186,7 @@ export default {
            };
           const response = await axios.post("/api/freq", params,); // config);
           // resp.value = response.data;
-          console.log("chart", response.data);
+          // console.log("chart", response.data);
           freq.start  = Number(response.data["freq"][0][0]);
           freq.end = Number(response.data["freq"].slice(-1)[0][0]);
           freq.data = response.data["freq"].map(x => x[1]);
@@ -237,7 +237,7 @@ export default {
       localStorage.setItem('token', params.token);
       localStorage.setItem('spd', params.spd);
       localStorage.setItem('dpp', params.dpp);
-      console.log("data", params);
+      console.log("query params", params);
       await Promise.all([performQuery(), renderChart()]);
     };
 
@@ -331,16 +331,7 @@ export default {
   margin: 10px auto;
   padding: 0 20px;
 }
-svg {
-  /* important for responsiveness */
-  display: block;
-  fill: none;
-  stroke: none;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  background: #eee;
-}
+
 .text-property:first-letter{
   text-transform: capitalize;
 }

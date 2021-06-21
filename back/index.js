@@ -91,7 +91,7 @@ const __dirname = path.dirname(__filename);
 	});
 
 	app.post('/api/freq', async(req, res) => {
-		const cacheKey = serializeQuery(req.url, req.body);
+		const cacheKey = serializeQuery(req.url, { [req.body.token]: req.body.corpus || 'main'  });
 		const datum = await search.getFromCache(req.body.token, cacheKey);
 		console.log(datum ? '■': '□', req.method, req.url, req.body);
 		res.json(datum || await search.getFreq(cacheKey, req.body.token, req.body.corpus));

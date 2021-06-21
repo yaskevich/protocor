@@ -23,6 +23,19 @@ const logout = async() => {
 
 const space000 = (x: String) =>  x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 
+
+const getFormattedTime = () => {
+    var today = new Date();
+    var y = today.getFullYear();
+    // JavaScript months are 0-based.
+    var m = today.getMonth() + 1;
+    var d = today.getDate();
+    var h = today.getHours();
+    var mi = today.getMinutes();
+    var s = today.getSeconds();
+    return y + "-" + m + "-" + d + "-" + h + "-" + mi + "-" + s;
+}
+
 const getUser = async() => {
     if(state.key) {
       try {
@@ -131,6 +144,7 @@ export default {
   getUser,
   doLogin,
   space000,
+  getFormattedTime,
   // initUser,
   // getData,
   // deleteById,

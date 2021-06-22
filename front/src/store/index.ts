@@ -8,7 +8,8 @@ const state = reactive({
         queries: JSON.parse(localStorage.getItem('queries') || "[]"),
   },
   search: {
-    token: localStorage.getItem('token') || '',
+    // token: localStorage.getItem('token') || '',
+    token: '',
     spd: Number(localStorage.getItem('spd')) || 10,
     dpp: Number(localStorage.getItem('dpp')) || 10,
   },

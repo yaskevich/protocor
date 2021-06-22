@@ -105,6 +105,7 @@ export default {
     const textInfo  = ref({});
     const resp = ref({});
     const params = store.state.search;
+    params.token = '';
     // const freq = ref([]);
     const freq = reactive({"data": [], "start": 1800, "end": 2021});
     const user = store.state.user;
@@ -214,31 +215,33 @@ export default {
 
     const onSubmit = async(e) => {
       // console.log(e);
-      if (e?.originalEvent?.target?.id) {
-        console.log("new val", e.originalEvent.target.id, e.value);
-        if (e.value > rules[e.originalEvent.target.id]["max"]) {
-            params[e.originalEvent.target.id] = rules[e.originalEvent.target.id]["max"];
-        } else if (e.value < rules[e.originalEvent.target.id]["min"]) {
-          params[e.originalEvent.target.id] = rules[e.originalEvent.target.id]["min"];
-        } else {
-          params[e.originalEvent.target.id] = e.value;
+      if (params.token) {
+        if (e?.originalEvent?.target?.id) {
+          console.log("new val", e.originalEvent.target.id, e.value);
+          if (e.value > rules[e.originalEvent.target.id]["max"]) {
+              params[e.originalEvent.target.id] = rules[e.originalEvent.target.id]["max"];
+          } else if (e.value < rules[e.originalEvent.target.id]["min"]) {
+            params[e.originalEvent.target.id] = rules[e.originalEvent.target.id]["min"];
+          } else {
+            params[e.originalEvent.target.id] = e.value;
+          }
         }
-      }
 
-      if(e && user.queries[0] !== params.token) {
-        const index = user.queries.indexOf(params.token);
-        if (index !== -1) {
-          user.queries.splice(index, 1);
+        if(e && user.queries[0] !== params.token) {
+          const index = user.queries.indexOf(params.token);
+          if (index !== -1) {
+            user.queries.splice(index, 1);
+          }
+          user.queries.unshift(params.token);
+          localStorage.setItem('queries', JSON.stringify(user.queries));
         }
-        user.queries.unshift(params.token);
-        localStorage.setItem('queries', JSON.stringify(user.queries));
-      }
 
-      localStorage.setItem('token', params.token);
-      localStorage.setItem('spd', params.spd);
-      localStorage.setItem('dpp', params.dpp);
-      console.log("query params", params);
-      await Promise.all([performQuery(), renderChart()]);
+        // localStorage.setItem('token', params.token);
+        localStorage.setItem('spd', params.spd);
+        localStorage.setItem('dpp', params.dpp);
+        console.log("query params", params);
+        await Promise.all([performQuery(), renderChart()]);
+      }
     };
 
     const displayModal = ref(false);

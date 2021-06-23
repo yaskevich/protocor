@@ -19,7 +19,7 @@
 
   export default {
     name: 'Chart',
-    props: ['data', 'start', 'end', 'title'],
+    props: ['data', 'title'],
     setup(props) {
       // create ref to pass to D3 for DOM manipulation
       const svgRef = ref(null);
@@ -32,19 +32,29 @@
       onMounted(() => {
         // pass ref with DOM element to D3, when mounted (DOM available)
         const svg = d3.select(svgRef.value);
+        svg.style('display', 'none');
         // whenever any dependencies (like data, resizeState) change, call this!
         watchEffect(() => {
           if (props.data?.length) {
+            // console.log("data", props.data);
+            const end = Number(props.data.slice(-1)[0][0]);
+            const start = Number(props.data[0][0]);
+            // const freqs = props.data.map((x) => x[1]);
+            const freqs  = Array(end - start).fill(0);
+            props.data.forEach(item => freqs[item[0]-start]=item[1]);
+            // console.log("freqs", freqs);
+
             svg.style('display', 'block');
             const { width, height } = resizeState.dimensions;
             // scales: map index / data values to pixel values on x-axis / y-axis
             const xScale = d3
               .scaleLinear()
-              .domain([0, props.data.length - 1])
+              .domain([0, freqs.length - 1])
               .range([0, width]);
             const yScale = d3
               .scaleLinear()
-              .domain([d3.min(props.data), d3.max(props.data)])
+              // .domain([d3.min(freqs), d3.max(freqs)])
+              .domain([0, d3.max(freqs)])
               .range([height, 0]);
             // line generator: D3 method to transform an array of values to data points ("d") for a path element
             // const lineZero  =  d3.line()
@@ -63,9 +73,9 @@
             var path = svg
               //.append("path")
               .selectAll('.line')
-              .data([props.data]) // pass entire data array
+              .data([freqs]) // pass entire data array
               .join('path')
-              // .datum(props.data)
+              // .datum(freqs)
               .attr('class', 'line')
               .style('fill', 'none')
               .style('stroke', 'green')
@@ -89,7 +99,7 @@
 
             // svg
             //   .selectAll(".line")
-            //   .data([props.data]) // pass entire data array
+            //   .data([freqs]) // pass entire data array
             //   .join("path")
             //   .attr("class", "line")
             //   .attr("stroke", "green")
@@ -101,7 +111,7 @@
             // render axes with help of scales
             const xAxis = d3.axisBottom(xScale).tickFormat((d, i) => {
               // console.log(d, i);
-              return d + props.start;
+              return d + start;
             });
 
             svg
@@ -129,7 +139,7 @@
               .text('Ruscorpora.ru');
           } else {
             // console.log("chart is empty");
-            svg.style('display', 'none');
+            // svg.style('display', 'none');
           }
         });
       });

@@ -131,7 +131,10 @@ export default {
     try {
       const response = await axios.get('https://processing.ruscorpora.ru/graphic.xml', { params: params });
       // console.log(response.data.values[0].data);
-      const {data} = response.data.values[0];
+      let {data} = response.data.values[0];
+      if(data){
+        data = data.map(x => [parseInt(x[0], 10), x[1]]).sort((a, b) => a[0] - b[0]);
+      }
       const returnResults = { "freq": data };
       cache.putSync(key, returnResults);
       return returnResults;

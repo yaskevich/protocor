@@ -25,7 +25,7 @@
   </div>
 
   <div class="chart-holder">
-    <Chart :data="freq.data" :start="freq.start" :end="freq.end" :title="params.token"/>
+    <Chart :data="freq" :title="params.token"/>
   </div>
 
   <div v-if="resp.hasOwnProperty('corp_stat')" class="p-mt-4">
@@ -106,8 +106,8 @@ export default {
     const resp = ref({});
     const params = store.state.search;
     params.token = '';
-    // const freq = ref([]);
-    const freq = reactive({"data": [], "start": 1800, "end": 2021});
+    const freq = ref([]);
+    // const freq = reactive({});
     const user = store.state.user;
     console.log("init params", params);
     const gramMode = ref();
@@ -180,21 +180,8 @@ export default {
     });
 
     const renderChart = async(e) => {
-      if(params.token){
-        try {
-          const config = {
-             // headers: { Authorization: "Bearer " + state.token },
-           };
-          const response = await axios.post("/api/freq", params,); // config);
-          // resp.value = response.data;
-          // console.log("chart", response.data);
-          freq.start  = Number(response.data["freq"][0][0]);
-          freq.end = Number(response.data["freq"].slice(-1)[0][0]);
-          freq.data = response.data["freq"].map(x => x[1]);
-        } catch (error) {
-          console.log("Cannot get data via API", error)
-          return error;
-        }
+      if (!(params.token in freq.value)) {
+        freq.value = await store.getFreq(params.token);
       }
     };
 

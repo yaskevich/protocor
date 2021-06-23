@@ -2,11 +2,20 @@ import { reactive } from "vue";
 import axios from "axios";
 // import router from "./router";
 
-const state = reactive({
+
+interface MyData {
+    user: Object;
+    freqs: any,
+    key: string,
+
+}
+
+const state:MyData = reactive({
   key: localStorage.getItem('key') || '',
   user: {
         queries: JSON.parse(localStorage.getItem('queries') || "[]"),
   },
+  freqs: {},
   search: {
     // token: localStorage.getItem('token') || '',
     token: '',
@@ -119,6 +128,42 @@ const postData = async(table: string, data: Object): Promise<any> => {
 //  console.log("No key. Fail.");
 // };
 
+const getKeyValue = <T extends object, U extends keyof T>(key: U) => (obj: T) =>
+  obj[key];
+
+const getFreq =  async(token: string): Promise<any> => {
+  if (token) {
+    if (token in state.freqs){
+      console.log("■ freq", token);
+      return state.freqs[token as keyof typeof state.freqs];
+    } else {
+      try {
+        // const config = {
+          // headers: { Authorization: "Bearer " + state.token },
+        // };
+        const response:Object = await axios.post('/api/freq', { token: token }); // config);
+        // resp.value = response.data;
+        // console.log('freq', response.data);
+        const data:Object  = response['data' as keyof typeof response];
+        const result:Object = data['freq'  as keyof typeof data];
+        state.freqs[token] = result;
+        return result;
+        // return {
+          // "start": Number(response.data['freq'][0][0]),
+          // "end": Number(response.data['freq'].slice(-1)[0][0]),
+          // freq.data = response.data['freq'].map(Array.prototype.shift);
+          // "data": response.data['freq'].map((x:any) => x[1]),
+          // "data": response.data['freq'],
+        // }
+        // console.log('freq', freq);
+      } catch (error) {
+        console.log('Cannot get data via API', error);
+        return error;
+      }
+    }
+  }
+};
+
 const getData = async(route: string, id?: string): Promise<any> => {
   // if (state.key) {
     try {
@@ -139,6 +184,7 @@ const getData = async(route: string, id?: string): Promise<any> => {
 
 export default {
   // state: readonly(state),
+  getFreq,
   getData,
   logout,
   postData,

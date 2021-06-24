@@ -1,7 +1,7 @@
 <template>
 
   <div ref="resizeRef">
-    <svg ref="svgRef" @click="chartClicked">
+    <svg ref="svgRef" @click="chartClicked" style='display:none;'>
               <g class="x-axis" />
               <g class="y-axis" />
             </svg>
@@ -11,7 +11,7 @@
 
 <script>
 
-  import { onMounted, ref, watchEffect } from 'vue';
+  import { onMounted, ref, watchEffect, onBeforeMount, } from 'vue';
   import * as d3 from 'd3';
   import useResizeObserver from '@/resize';
   import store from '../store';
@@ -32,18 +32,19 @@
       onMounted(() => {
         // pass ref with DOM element to D3, when mounted (DOM available)
         const svg = d3.select(svgRef.value);
-        svg.style('display', 'none');
+        // svg.style('display', 'none');
         // whenever any dependencies (like data, resizeState) change, call this!
         watchEffect(() => {
           if (props.data?.length) {
             // console.log("data", props.data);
+            console.log("get props", props.title);
             const end = Number(props.data.slice(-1)[0][0]);
             const start = Number(props.data[0][0]);
             // const freqs = props.data.map((x) => x[1]);
             const freqs  = Array(end - start).fill(0);
             props.data.forEach(item => freqs[item[0]-start]=item[1]);
             // console.log("freqs", freqs);
-
+            console.log("show chart");
             svg.style('display', 'block');
             const { width, height } = resizeState.dimensions;
             // scales: map index / data values to pixel values on x-axis / y-axis
@@ -51,10 +52,12 @@
               .scaleLinear()
               .domain([0, freqs.length - 1])
               .range([0, width]);
+
+            const maxVal = d3.max(freqs);
             const yScale = d3
               .scaleLinear()
               // .domain([d3.min(freqs), d3.max(freqs)])
-              .domain([0, d3.max(freqs)])
+              .domain([0, maxVal])
               .range([height, 0]);
             // line generator: D3 method to transform an array of values to data points ("d") for a path element
             // const lineZero  =  d3.line()
@@ -78,7 +81,8 @@
               // .datum(freqs)
               .attr('class', 'line')
               .style('fill', 'none')
-              .style('stroke', 'green')
+              .style('stroke-width', 2)
+              .style('stroke', '#42b983')
               // .style('stroke', (d, i) => {
               //   // console.log(d, i);
               //   return 'green'
@@ -120,7 +124,7 @@
               .attr('transform', 'translate(0,' + height + ')')
               .call(xAxis);
 
-            const yAxis = d3.axisLeft(yScale).ticks(10, 'd');
+            const yAxis = d3.axisLeft(yScale).ticks(10, maxVal > 1 ? 'd': '.2f');
             svg
               .select('.y-axis')
               // .style("font", "14px times")

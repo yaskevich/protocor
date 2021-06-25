@@ -1,17 +1,17 @@
 <template>
 
   <div ref="resizeRef">
-    <svg ref="svgRef" @click="chartClicked" style='display:none;'>
-              <g class="x-axis" />
-              <g class="y-axis" />
-            </svg>
+    <svg ref="svgRef" @click="chartClicked">
+                          <g class="x-axis" />
+                          <g class="y-axis" />
+                        </svg>
   </div>
 
 </template>
 
 <script>
 
-  import { onMounted, ref, watchEffect, onBeforeMount, } from 'vue';
+  import { onMounted, ref, watchEffect, onBeforeMount, watch } from 'vue';
   import * as d3 from 'd3';
   import useResizeObserver from '@/resize';
   import store from '../store';
@@ -21,131 +21,101 @@
     name: 'Chart',
     props: ['data', 'title'],
     setup(props) {
+      console.log('chart setup');
       // create ref to pass to D3 for DOM manipulation
       const svgRef = ref(null);
       // create another ref to observe resizing, since observing SVGs doesn't work!
       const { resizeRef, resizeState } = useResizeObserver();
-      // var t = d3.transition()
-      //     .duration(750)
-      //     .ease(d3.easeLinear);
+      let svgInitiated = false;
+      let svg, path, width, height, xEnd, xStart, yMax, freqs;
+
+      const xScale = d3.scaleLinear();
+      const yScale = d3.scaleLinear();
+
+      const line = d3
+        .line()
+        // .defined(d => !isNaN(d))
+        .curve(d3.curveBasis);
+
+      const xAxis = d3.axisBottom(xScale);
+      const yAxis = d3.axisLeft(yScale);
+
+      const updateChart = () => {
+        if (!svgInitiated) {
+          svgInitiated = true;
+          svg = d3.select(svgRef.value);
+
+          svg
+            .append('text')
+            // .attr("transform", "rotate(-90)")
+            .attr('x', width - 6)
+            .attr('y', 6)
+            .attr('dy', '1em')
+            .style('text-anchor', 'end')
+            .style('fill', 'silver')
+            .text('Ruscorpora.ru');
+
+          path = svg
+            .append('path')
+            // .datum(freqs)
+            .attr('class', 'line');
+        }
+
+        xEnd = Number(props.data.slice(-1)[0][0]);
+        xStart = Number(props.data[0][0]);
+        freqs = Array(xEnd - xStart).fill(0);
+        props.data.forEach(item => (freqs[item[0] - xStart] = item[1]));
+        yMax = d3.max(freqs);
+
+        xScale.domain([0, freqs.length - 1]).range([0, width]);
+        yScale.domain([0, yMax]).range([height, 0]);
+
+        xAxis.scale(xScale).tickFormat(d => d + xStart);
+        yAxis.scale(yScale).ticks(10, yMax > 1 ? 'd' : '.2f');
+
+        svg
+          .select('.x-axis')
+          .attr('transform', 'translate(0,' + height + ')')
+          .call(xAxis);
+
+        svg.select('.y-axis').call(yAxis);
+
+        line.x((value, index) => xScale(index)).y(value => yScale(value));
+
+        path
+          //d3.select('.line')
+          .attr('fill', 'none')
+          .attr('stroke-width', 2)
+          .attr('stroke', '#42b983')
+          .attr('d', line(freqs));
+
+        const totalLength = path.node().getTotalLength();
+
+        path
+          .attr('stroke-dasharray', totalLength + ' ' + totalLength)
+          .attr('stroke-dashoffset', totalLength)
+          .transition()
+          .duration(2000)
+          .ease(d3.easeLinear)
+          .attr('stroke-dashoffset', 0);
+      };
 
       onMounted(() => {
-        // pass ref with DOM element to D3, when mounted (DOM available)
-        const svg = d3.select(svgRef.value);
-        // svg.style('display', 'none');
-        // whenever any dependencies (like data, resizeState) change, call this!
-        watchEffect(() => {
-          if (props.data?.length) {
-            // console.log("data", props.data);
-            console.log("get props", props.title);
-            const end = Number(props.data.slice(-1)[0][0]);
-            const start = Number(props.data[0][0]);
-            // const freqs = props.data.map((x) => x[1]);
-            const freqs  = Array(end - start).fill(0);
-            props.data.forEach(item => freqs[item[0]-start]=item[1]);
-            // console.log("freqs", freqs);
-            console.log("show chart");
-            svg.style('display', 'block');
-            const { width, height } = resizeState.dimensions;
-            // scales: map index / data values to pixel values on x-axis / y-axis
-            const xScale = d3
-              .scaleLinear()
-              .domain([0, freqs.length - 1])
-              .range([0, width]);
-
-            const maxVal = d3.max(freqs);
-            const yScale = d3
-              .scaleLinear()
-              // .domain([d3.min(freqs), d3.max(freqs)])
-              .domain([0, maxVal])
-              .range([height, 0]);
-            // line generator: D3 method to transform an array of values to data points ("d") for a path element
-            // const lineZero  =  d3.line()
-            //   .curve(d3.curveBasis)
-            //   .x((value, index) => xScale(index))
-            //   .y(height);
-            // for stroke-dash interpolation: https://observablehq.com/@jurestabuc/animated-line-chart
-            const line = d3
-              .line()
-              // .defined(d => !isNaN(d))
-              .curve(d3.curveBasis)
-              .x((value, index) => xScale(index))
-              .y(value => yScale(value));
-            // render path element with D3's General Update Pattern
-
-            var path = svg
-              //.append("path")
-              .selectAll('.line')
-              .data([freqs]) // pass entire data array
-              .join('path')
-              // .datum(freqs)
-              .attr('class', 'line')
-              .style('fill', 'none')
-              .style('stroke-width', 2)
-              .style('stroke', '#42b983')
-              // .style('stroke', (d, i) => {
-              //   // console.log(d, i);
-              //   return 'green'
-              // })
-              .attr('d', line);
-
-            // Variable to Hold Total Length
-            var totalLength = path.node().getTotalLength();
-
-            // Set Properties of Dash Array and Dash Offset and initiate Transition
-            path
-              .attr('stroke-dasharray', totalLength + ' ' + totalLength)
-              .attr('stroke-dashoffset', totalLength)
-              .transition() // Call Transition Method
-              .duration(2000) // Set Duration timing (ms)
-              .ease(d3.easeLinear) // Set Easing option
-              .attr('stroke-dashoffset', 0); // Set final value of dash-offset for transition
-
-            // svg
-            //   .selectAll(".line")
-            //   .data([freqs]) // pass entire data array
-            //   .join("path")
-            //   .attr("class", "line")
-            //   .attr("stroke", "green")
-            //   .attr("d", lineZero)
-            //   .transition()
-            //   .duration(1000) // duration of the animation
-            //   .delay(200)
-            //   .attr("d", lineGen);
-            // render axes with help of scales
-            const xAxis = d3.axisBottom(xScale).tickFormat((d, i) => {
-              // console.log(d, i);
-              return d + start;
-            });
-
-            svg
-              .select('.x-axis')
-              //.style('transform', `translateY(${height}px)`) // position on the bottom
-              .attr('transform', 'translate(0,' + height + ')')
-              .call(xAxis);
-
-            const yAxis = d3.axisLeft(yScale).ticks(10, maxVal > 1 ? 'd': '.2f');
-            svg
-              .select('.y-axis')
-              // .style("font", "14px times")
-              // .style("fill", "red")
-              .call(yAxis)
-              .append('text')
-              // .attr("transform", "rotate(-90)")
-
-              .attr('x', width - 6)
-              .attr('y', 6)
-              .attr('dy', '1em')
-              .style('text-anchor', 'end')
-              // .style('fill', 'gray')
-              .style('fill', 'silver')
-              // .style('font-family', 'Fira Sans Extra Condensed')
-              .text('Ruscorpora.ru');
-          } else {
-            // console.log("chart is empty");
-            // svg.style('display', 'none');
-          }
+        watch(resizeState, (newValues, preValues) => {
+          console.log('chart resized');
+          ({ width, height } = resizeState.dimensions);
+          updateChart();
         });
+
+        watch(
+          () => props.data,
+          () => {
+            if (props.data?.length) {
+              console.log('data updated');
+              updateChart();
+            }
+          }
+        );
       });
 
       const serializeSVG = svg => {
@@ -226,9 +196,6 @@
 
 <style>
 
-  path.line {
-    stroke: green;
-  }
   svg {
     /* important for responsiveness */
     display: block;

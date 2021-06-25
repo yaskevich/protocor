@@ -7,8 +7,16 @@ interface MyData {
     user: Object;
     freqs: any,
     key: string,
+};
 
-}
+interface ipmStruct {
+  year: number,
+  ipm: number,
+};
+
+interface ipmsStruct {
+  [index: string]: ipmStruct
+};
 
 const state:MyData = reactive({
   key: localStorage.getItem('key') || '',
@@ -145,9 +153,28 @@ const getFreq =  async(token: string): Promise<any> => {
         // resp.value = response.data;
         // console.log('freq', response.data);
         const data:Object  = response['data' as keyof typeof response];
-        const result:Object = data['freq'  as keyof typeof data];
-        state.freqs[token] = result;
-        return result;
+        const result:Array<ipmsStruct> = data['freq'  as keyof typeof data] as any;
+
+        const yearLast:number = Number(result.slice(-1)[0][0]);
+        const yearFirst:number = Number(result[0][0]);
+        const ipms:Array<number> = Array(yearLast - yearFirst).fill(0);
+        let ipmMax:number = 0;
+        result.forEach(item => {
+          const ind:number = Number(item[0]) - yearFirst;
+          const num  = Number(item[1]);
+          ipms[ind] = num;
+          if (ipmMax < num) {
+            ipmMax = num;
+          }
+        });
+
+        state.freqs[token] = {
+          "yearLast": yearLast,
+          "yearFirst": yearFirst,
+          "ipmMax": ipmMax,
+          "ipms": ipms,
+        };
+        return;
         // return {
           // "start": Number(response.data['freq'][0][0]),
           // "end": Number(response.data['freq'].slice(-1)[0][0]),

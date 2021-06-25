@@ -2,9 +2,9 @@
 
   <div ref="resizeRef">
     <svg ref="svgRef" @click="chartClicked">
-                          <g class="x-axis" />
-                          <g class="y-axis" />
-                        </svg>
+                            <g class="x-axis" />
+                            <g class="y-axis" />
+                          </svg>
   </div>
 
 </template>
@@ -19,7 +19,7 @@
 
   export default {
     name: 'Chart',
-    props: ['data', 'title'],
+    props: ['tokens'],
     setup(props) {
       console.log('chart setup');
       // create ref to pass to D3 for DOM manipulation
@@ -27,7 +27,7 @@
       // create another ref to observe resizing, since observing SVGs doesn't work!
       const { resizeRef, resizeState } = useResizeObserver();
       let svgInitiated = false;
-      let svg, path, width, height, xEnd, xStart, yMax, freqs;
+      let svg, path, width, height;
 
       const xScale = d3.scaleLinear();
       const yScale = d3.scaleLinear();
@@ -57,21 +57,19 @@
 
           path = svg
             .append('path')
-            // .datum(freqs)
+            // .datum(freqs.ipms)
             .attr('class', 'line');
         }
 
-        xEnd = Number(props.data.slice(-1)[0][0]);
-        xStart = Number(props.data[0][0]);
-        freqs = Array(xEnd - xStart).fill(0);
-        props.data.forEach(item => (freqs[item[0] - xStart] = item[1]));
-        yMax = d3.max(freqs);
+        console.log('tokens', props.tokens);
 
-        xScale.domain([0, freqs.length - 1]).range([0, width]);
-        yScale.domain([0, yMax]).range([height, 0]);
+        const freqs = store.state.freqs[props.tokens[0]];
+        
+        xScale.domain([0, freqs.ipms.length - 1]).range([0, width]);
+        yScale.domain([0, freqs.ipmMax]).range([height, 0]);
 
-        xAxis.scale(xScale).tickFormat(d => d + xStart);
-        yAxis.scale(yScale).ticks(10, yMax > 1 ? 'd' : '.2f');
+        xAxis.scale(xScale).tickFormat(d => d + freqs.yearFirst);
+        yAxis.scale(yScale).ticks(10, freqs.ipmMax > 1 ? 'd' : '.2f');
 
         svg
           .select('.x-axis')
@@ -87,7 +85,7 @@
           .attr('fill', 'none')
           .attr('stroke-width', 2)
           .attr('stroke', '#42b983')
-          .attr('d', line(freqs));
+          .attr('d', line(freqs.ipms));
 
         const totalLength = path.node().getTotalLength();
 
@@ -108,9 +106,9 @@
         });
 
         watch(
-          () => props.data,
+          () => props.tokens,
           () => {
-            if (props.data?.length) {
+            if (props.tokens?.length) {
               console.log('data updated');
               updateChart();
             }

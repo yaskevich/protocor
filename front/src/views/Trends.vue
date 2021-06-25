@@ -2,7 +2,7 @@
 
   <div class="trends">
     <div class="chart-holder">
-      <Chart :data="freq.data" :start="freq.start" :end="freq.end" title="trends" />
+      <Chart :data="freq" title="Тренды" v-if="freq.length" />
     </div>
     <div class="p-mt-6">
       <Chip :label="item" removable v-for="item in tokens" :key="item" class="p-mr-2" @remove="removeToken(item)" />
@@ -23,7 +23,7 @@
   export default defineComponent({
     setup() {
       const token = ref('');
-      const freq = reactive({ data: [], start: 1800, end: 2021 });
+      const freq = ref({});
       const tokens = reactive([]);
 
       onBeforeMount(async () => {

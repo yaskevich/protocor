@@ -2,7 +2,7 @@
   <div class="p-field">
     <span v-for="item in user.queries" :key="item">
       <!-- v-if="item !== params.token" -->
-      <Button :label="item" class="p-button-sm p-button-plain p-button-text p-button-raised" @click="params.token = item; onSubmit($event);"/>
+      <Button :label="item" v-if="item !== params.token"  class="p-button-sm p-button-plain p-button-text p-button-raised" @click="params.token = item; onSubmit($event);"/>
     </span>
   </div>
 
@@ -25,12 +25,12 @@
   </div>
 
   <div class="chart-holder">
-    <Chart :data="freq" :title="params.token"/>
+    <Chart :data="freq" :title="params.token" v-if="freq.length"/>
   </div>
 
   <div v-if="resp.hasOwnProperty('corp_stat')" class="p-mt-4">
     <div class="">Корпус: {{store.space000(resp.corp_stat.stats[1].num)}} слов, {{store.space000(resp.corp_stat.stats[0].num)}} документов</div>
-    <div>«<span class="p-text-bold">{{params.token}}</span>»: {{store.space000(resp.found_stat.stats[1].num)}} вхождений, {{store.space000(resp.found_stat.stats[0].num)}} документов</div>
+    <div>«<span class="p-text-bold">{{user.queries[0]}}</span>»: {{store.space000(resp.found_stat.stats[1].num)}} вхождений, {{store.space000(resp.found_stat.stats[0].num)}} документов</div>
     <Divider />
     <div v-for="(value, key) in resp.documents" class="p-mt-1 doc p-p-2 p-shadow-3" :key="key">
       <div v-for="(snippet, index) in value.snippets" class="p-mt-2 p-mb-2 snippet p-p-1" :key="index">
@@ -180,9 +180,7 @@ export default {
     });
 
     const renderChart = async(e) => {
-      if (!(params.token in freq.value)) {
-        freq.value = await store.getFreq(params.token);
-      }
+      freq.value = await store.getFreq(params.token);
     };
 
     const performQuery = async(isFull) => {
@@ -226,7 +224,7 @@ export default {
         // localStorage.setItem('token', params.token);
         localStorage.setItem('spd', params.spd);
         localStorage.setItem('dpp', params.dpp);
-        console.log("query params", params);
+        // console.log("query params", params);
         await Promise.all([performQuery(), renderChart()]);
       }
     };
@@ -318,8 +316,8 @@ export default {
   text-align: center;
   color: #2c3e50;
   max-width: 720px;
-  margin: 10px auto;
-  padding: 0 20px;
+  margin: auto;
+  padding: 20px 40px;
 }
 
 .text-property:first-letter{

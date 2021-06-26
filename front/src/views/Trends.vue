@@ -1,21 +1,21 @@
 <template>
 
   <div class="trends">
-    <div class="chart-holder">
-      <Chart :data="freq" title="Тренды" v-if="freq.length" />
-    </div>
     <div class="p-mt-6">
       <Chip :label="item" removable v-for="item in tokens" :key="item" class="p-mr-2" @remove="removeToken(item)" />
       <InputText type="text" v-model="token" @keyup.enter="addToken" />
+      <Button label="Добавить" @click="addToken" class="p-button-secondary" />
     </div>
+  </div>
+  <div class="chart-holder">
+    <Chart :tokens="value" v-for="(value, key) in tokens" :key="key" class="p-mb-6" />
   </div>
 
 </template>
 
-
 <script>
 
-  import { ref, reactive, onBeforeMount, defineComponent, watch } from 'vue';
+  import { ref, reactive, defineComponent, } from 'vue';
   import Chart from '../components/Chart.vue';
   import Chip from 'primevue/chip';
   import store from '../store';
@@ -23,25 +23,9 @@
   export default defineComponent({
     setup() {
       const token = ref('');
-      const freq = ref({});
-      const tokens = reactive([]);
+      const tokens = reactive(['котик', 'лиса']);
 
-      onBeforeMount(async () => {
-        tokens.push('котик', 'лиса');
-      });
-
-      watch(
-        () => tokens.length,
-        async (count, prevCount) => {
-          console.log('tokens len', count);
-          for (let i = 0; i < tokens.length; i++) {
-            // console.log('get', tokens[i]);
-            await store.getFreq(tokens[i]);
-          }
-        }
-      );
-
-      const addToken = () => {
+      const addToken = async () => {
         if (token.value) {
           token.value = token.value.trim();
           console.log('token', token.value);
@@ -53,19 +37,14 @@
       };
 
       const removeToken = val => {
-        console.log('val', val);
         tokens.splice(tokens.indexOf(val), 1);
       };
-
-      const renderChart = async e => {};
 
       return {
         removeToken,
         addToken,
-        renderChart,
         tokens,
         token,
-        freq,
       };
     },
     components: {

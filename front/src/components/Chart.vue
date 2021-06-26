@@ -2,9 +2,9 @@
 
   <div ref="resizeRef">
     <svg ref="svgRef" @click="chartClicked">
-                            <g class="x-axis" />
-                            <g class="y-axis" />
-                          </svg>
+      <g class="x-axis" />
+      <g class="y-axis" />
+  </svg>
   </div>
 
 </template>
@@ -40,7 +40,7 @@
       const xAxis = d3.axisBottom(xScale);
       const yAxis = d3.axisLeft(yScale);
 
-      const updateChart = () => {
+      const updateChart = async () => {
         if (!svgInitiated) {
           svgInitiated = true;
           svg = d3.select(svgRef.value);
@@ -61,10 +61,12 @@
             .attr('class', 'line');
         }
 
-        console.log('tokens', props.tokens);
+        console.log('tokens', props.tokens, typeof props.tokens);
 
-        const freqs = store.state.freqs[props.tokens[0]];
-        
+        const tkn  = typeof props.tokens == 'Object' ? props.tokens[0] :  props.tokens;
+        await store.getFreq(tkn);
+        const freqs = store.state.freqs[tkn];
+
         xScale.domain([0, freqs.ipms.length - 1]).range([0, width]);
         yScale.domain([0, freqs.ipmMax]).range([height, 0]);
 
@@ -107,9 +109,9 @@
 
         watch(
           () => props.tokens,
-          () => {
+          (newVal, preVal) => {
             if (props.tokens?.length) {
-              console.log('data updated');
+              console.log('data updated', "new:", newVal,  "pre", preVal);
               updateChart();
             }
           }

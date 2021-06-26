@@ -25,7 +25,7 @@
   </div>
 
   <div class="chart-holder">
-    <Chart :data="freq" :title="params.token" v-if="freq.length"/>
+    <Chart :tokens="chartTokens" v-if="chartTokens.length"/>
   </div>
 
   <div v-if="resp.hasOwnProperty('corp_stat')" class="p-mt-4">
@@ -106,8 +106,9 @@ export default {
     const resp = ref({});
     const params = store.state.search;
     params.token = '';
-    const freq = ref([]);
-    // const freq = reactive({});
+
+    const chartTokens = ref([]);
+
     const user = store.state.user;
     console.log("init params", params);
     const gramMode = ref();
@@ -179,8 +180,8 @@ export default {
 
     });
 
-    const renderChart = async(e) => {
-      freq.value = await store.getFreq(params.token);
+    const renderChart = async() => {
+      chartTokens.value = params.token;
     };
 
     const performQuery = async(isFull) => {
@@ -267,10 +268,10 @@ export default {
 
     return {
       onSubmit, resp, params, rules, displayModal,
-      openModal, closeModal, textInfo, renderChart, freq,
+      openModal, closeModal, textInfo, renderChart,
       buttonItems, user, store, displaySettings, showSettings,
       l10n, gramMode, gramButtonOptions, clickGramMode, items, menu,
-      like, likeContexts,
+      like, likeContexts, chartTokens,
     };
   },
   components: {

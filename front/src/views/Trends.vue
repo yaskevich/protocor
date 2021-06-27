@@ -2,13 +2,15 @@
 
   <div class="trends">
     <div class="p-mt-6">
-      <Chip :label="item" removable v-for="item in tokens" :key="item" class="p-mr-2" @remove="removeToken(item)" />
+      <Chip :label="item" removable v-for="item in tokens" :key="item" @remove="removeToken(item)" class="p-mr-2" />
+    </div>
+    <div class="p-mt-2">
       <InputText type="text" v-model="token" @keyup.enter="addToken" />
-      <Button label="Добавить" @click="addToken" class="p-button-secondary" />
+      <Button icon='pi pi-plus' @click="addToken" class="p-button-secondary" />
     </div>
   </div>
   <div class="chart-holder">
-    <Chart :tokens="value" v-for="(value, key) in tokens" :key="key" class="p-mb-6" />
+    <Chart :tokens="value" v-for="(value, key) in tokens" :key="value" class="p-mb-6" />
   </div>
 
 </template>

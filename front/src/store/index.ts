@@ -157,7 +157,7 @@ const getFreq =  async(token: string): Promise<any> => {
 
         const yearLast:number = Number(result.slice(-1)[0][0]);
         const yearFirst:number = Number(result[0][0]);
-        const ipms:Array<number> = Array(yearLast - yearFirst).fill(0);
+        const ipms:Array<number> = Array(yearLast - yearFirst).fill(undefined);
         let ipmMax:number = 0;
         result.forEach(item => {
           const ind:number = Number(item[0]) - yearFirst;

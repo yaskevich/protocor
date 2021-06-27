@@ -2,9 +2,9 @@
 
   <div ref="resizeRef">
     <svg ref="svgRef" @click="chartClicked">
-      <g class="x-axis" />
-      <g class="y-axis" />
-  </svg>
+          <g class="x-axis" />
+          <g class="y-axis" />
+      </svg>
   </div>
 
 </template>
@@ -27,16 +27,13 @@
       // create another ref to observe resizing, since observing SVGs doesn't work!
       const { resizeRef, resizeState } = useResizeObserver();
       let svgInitiated = false;
-      let svg, path, width, height;
+      let svg, path, dots, width, height, tkn;
 
       const xScale = d3.scaleLinear();
       const yScale = d3.scaleLinear();
 
-      const line = d3
-        .line()
-        // .defined(d => !isNaN(d))
-        .curve(d3.curveBasis);
-
+      const line = d3.line().defined(d => !isNaN(d));
+      // .curve(d3.curveBasis)
       const xAxis = d3.axisBottom(xScale);
       const yAxis = d3.axisLeft(yScale);
 
@@ -49,11 +46,10 @@
             .append('text')
             // .attr("transform", "rotate(-90)")
             .attr('x', width - 6)
-            .attr('y', 6)
-            .attr('dy', '1em')
+            .attr('y', 14)
             .style('text-anchor', 'end')
             .style('fill', 'silver')
-            .text('Ruscorpora.ru');
+            .text('ruscorpora.ru');
 
           path = svg
             .append('path')
@@ -63,12 +59,13 @@
 
         console.log('tokens', props.tokens, typeof props.tokens);
 
-        const tkn  = typeof props.tokens == 'Object' ? props.tokens[0] :  props.tokens;
+        tkn = typeof props.tokens == 'Object' ? props.tokens[0] : props.tokens;
         await store.getFreq(tkn);
         const freqs = store.state.freqs[tkn];
+        // console.log(tkn, freqs.ipms);
 
-        xScale.domain([0, freqs.ipms.length - 1]).range([0, width]);
-        yScale.domain([0, freqs.ipmMax]).range([height, 0]);
+        xScale.domain([0, freqs.ipms.length]).range([0, width]);
+        yScale.domain([0, freqs.ipmMax + freqs.ipmMax / 10]).range([height, 0]);
 
         xAxis.scale(xScale).tickFormat(d => d + freqs.yearFirst);
         yAxis.scale(yScale).ticks(10, freqs.ipmMax > 1 ? 'd' : '.2f');
@@ -88,6 +85,33 @@
           .attr('stroke-width', 2)
           .attr('stroke', '#42b983')
           .attr('d', line(freqs.ipms));
+
+        if (dots) {
+          svg.selectAll('.dots').remove();
+        }
+        dots = svg.selectAll('.dots').data(freqs.ipms);
+
+        dots
+          .enter()
+          .append('circle')
+          .attr('class', 'dots')
+          .attr('cx', function(d, i) {
+            return xScale(i);
+          })
+          .attr('cy', function(d) {
+            return yScale(d || 0);
+          })
+          .attr('r', 0)
+          // .style("fill", "#2196F3")
+          .attr('fill', '#42b983')
+          // .attr('stroke', '#42b983')
+          // .attr('stroke-width', 1)
+          .transition()
+          // .duration(1000)
+          .delay((d, i) => i * 10)
+          .attr('r', d => (d ? 2 : 0));
+
+        // dots.exit().remove();
 
         const totalLength = path.node().getTotalLength();
 
@@ -111,7 +135,7 @@
           () => props.tokens,
           (newVal, preVal) => {
             if (props.tokens?.length) {
-              console.log('data updated', "new:", newVal,  "pre", preVal);
+              console.log('data updated', 'new:', newVal, 'pre', preVal);
               updateChart();
             }
           }
@@ -152,7 +176,7 @@
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
         const link = document.createElement('a');
-        const filename = props.title + '-' + store.getFormattedTime();
+        const filename = tkn + '-' + store.getFormattedTime();
 
         image.onload = () => {
           const rect = svg.getBoundingClientRect();

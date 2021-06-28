@@ -28,7 +28,7 @@
     <Chart :tokens="chartTokens" v-if="chartTokens.length"/>
   </div>
 
-  <div v-if="resp.hasOwnProperty('corp_stat')" class="p-mt-4">
+  <div v-if="resp.hasOwnProperty('corp_stat')" class="p-mt-6">
     <div class="">Корпус: {{store.space000(resp.corp_stat.stats[1].num)}} слов, {{store.space000(resp.corp_stat.stats[0].num)}} документов</div>
     <div>«<span class="p-text-bold">{{user.queries[0]}}</span>»: {{store.space000(resp.found_stat.stats[1].num)}} вхождений, {{store.space000(resp.found_stat.stats[0].num)}} документов</div>
     <Divider />
@@ -315,10 +315,10 @@ export default {
 
 .chart-holder {
   text-align: center;
-  color: #2c3e50;
+  /*color: #2c3e50;*/
   max-width: 720px;
   margin: auto;
-  padding: 20px 40px;
+/*  padding: 20px 40px;*/
 }
 
 .text-property:first-letter{

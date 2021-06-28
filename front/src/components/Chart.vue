@@ -1,10 +1,7 @@
 <template>
 
   <div ref="resizeRef">
-    <svg ref="svgRef" @click="chartClicked">
-          <g class="x-axis" />
-          <g class="y-axis" />
-      </svg>
+    <svg ref="svgRef" @click="chartClicked"></svg>
   </div>
 
 </template>
@@ -28,6 +25,7 @@
       const { resizeRef, resizeState } = useResizeObserver();
       let svgInitiated = false;
       let svg, path, dots, width, height, tkn;
+      const margin = {top: 10, right: 10, bottom: 50, left: 25};
 
       const xScale = d3.scaleLinear();
       const yScale = d3.scaleLinear();
@@ -41,6 +39,12 @@
         if (!svgInitiated) {
           svgInitiated = true;
           svg = d3.select(svgRef.value);
+          svg = svg.append("g");
+          // svg.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+          svg.attr("transform", "translate(" + margin.left + "," + 0 + ")");
+
+          svg.append("g").attr("class", "x-axis")
+          svg.append("g").attr("class", "y-axis")
 
           svg
             .append('text')
@@ -127,7 +131,9 @@
       onMounted(() => {
         watch(resizeState, (newValues, preValues) => {
           console.log('chart resized');
-          ({ width, height } = resizeState.dimensions);
+          width = resizeState.dimensions.width - margin.left - margin.right;
+          // height = resizeState.dimensions.height - margin.top - margin.bottom;
+          height = resizeState.dimensions.height;
           updateChart();
         });
 
@@ -161,7 +167,7 @@
           svg.setAttributeNS(xmlns, 'xmlns', svgns);
           svg.setAttributeNS(xmlns, 'xmlns:xlink', xlinkns);
           const { width, height } = resizeState.dimensions;
-          svg.setAttribute('viewBox', `-50 -50 ${width + 100} ${height + 100}`);
+          svg.setAttribute('viewBox', `-10 -10 ${width + 20} ${height + 40}`);
           const serializer = new window.XMLSerializer();
           const string = serializer.serializeToString(svg);
           return new Blob([string], { type: 'image/svg+xml' });
@@ -222,13 +228,16 @@
 
   svg {
     /* important for responsiveness */
-    display: block;
+    /* display: block;
     fill: none;
     stroke: none;
+
+
+    background: #eee;
+    */
+    overflow: visible;
     width: 100%;
     height: 100%;
-    overflow: visible;
-    background: #eee;
   }
 
   .y-axis text {

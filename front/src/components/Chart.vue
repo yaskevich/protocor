@@ -26,6 +26,22 @@
       let svgInitiated = false;
       let svg, path, dots, width, height, tkn;
       const margin = {top: 10, right: 10, bottom: 50, left: 25};
+      const ruRU = {
+        "decimal": ",",
+        "thousands": " ",
+        "grouping": [3],
+        "currency": ["", " руб."],
+        "dateTime": "%A, %e %B %Y г. %X",
+        "date": "%d.%m.%Y",
+        "time": "%H:%M:%S",
+        "periods": ["AM", "PM"],
+        "days": ["воскресенье", "понедельник", "вторник", "среда", "четверг", "пятница", "суббота"],
+        "shortDays": ["вс", "пн", "вт", "ср", "чт", "пт", "сб"],
+        "months": ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"],
+        "shortMonths": ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"]
+      };
+
+      d3.formatDefaultLocale(ruRU);
 
       const xScale = d3.scaleLinear();
       const yScale = d3.scaleLinear();
@@ -68,11 +84,17 @@
         const freqs = store.state.freqs[tkn];
         // console.log(tkn, freqs.ipms);
 
-        xScale.domain([0, freqs.ipms.length]).range([0, width]);
-        yScale.domain([0, freqs.ipmMax + freqs.ipmMax / 10]).range([height, 0]);
+        xScale.domain([0, freqs.ipms.length]).range([0, width]).nice();
+        yScale.domain([0, freqs.ipmMax]).range([height, 0]).nice();
 
-        xAxis.scale(xScale).tickFormat(d => d + freqs.yearFirst);
-        yAxis.scale(yScale).ticks(10, freqs.ipmMax > 1 ? 'd' : '.2f');
+        xAxis.scale(xScale)
+        .tickFormat(d => d + freqs.yearFirst);
+        yAxis.scale(yScale)
+        .ticks(6)
+        // .ticks(10, freqs.ipmMax > 1 ? 'd' : '.2')
+        // .tickFormat(d => d/1000 >= 1 ? d/1000+'т' : d);
+        .tickFormat(d => d3.format(d<1? '.2': d > 1000 ? '.2s' : 'd')(d));
+
 
         svg
           .select('.x-axis')

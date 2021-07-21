@@ -8,25 +8,26 @@ import 'primeflex/primeflex.css';
 import 'primevue/resources/themes/saga-blue/theme.css';
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
-import Button from 'primevue/button';
-import InputText from 'primevue/inputtext';
-import InputNumber from 'primevue/inputnumber';
-import Dialog from 'primevue/dialog';
-import SelectButton from 'primevue/selectbutton';
-import Divider from 'primevue/divider';
-import Toast from 'primevue/toast';
 import AutoComplete from 'primevue/autocomplete';
-import Inplace from 'primevue/inplace';
-import MultiSelect from 'primevue/multiselect';
-import Tag from 'primevue/tag';
-import InputSwitch from 'primevue/inputswitch';
-import Panel from 'primevue/panel';
-import TabView from 'primevue/tabview';
-import TabPanel from 'primevue/tabpanel';
-import Dropdown from 'primevue/dropdown';
 import Badge from 'primevue/badge';
+import Button from 'primevue/button';
+import Dialog from 'primevue/dialog';
+import Divider from 'primevue/divider';
+import Dropdown from 'primevue/dropdown';
+import Inplace from 'primevue/inplace';
+import InputNumber from 'primevue/inputnumber';
+import InputSwitch from 'primevue/inputswitch';
+import InputText from 'primevue/inputtext';
+import Menu from 'primevue/menu';
+import MultiSelect from 'primevue/multiselect';
+import Panel from 'primevue/panel';
 import ScrollTop from 'primevue/scrolltop';
+import SelectButton from 'primevue/selectbutton';
 import SplitButton from 'primevue/splitbutton';
+import TabPanel from 'primevue/tabpanel';
+import TabView from 'primevue/tabview';
+import Tag from 'primevue/tag';
+import Toast from 'primevue/toast';
 
 import "@fontsource/fira-sans-extra-condensed" // Defaults to weight 400 with normal variant.
 import "@fontsource/fira-sans-extra-condensed/400-italic.css" // Italic variant.
@@ -58,4 +59,5 @@ createApp(App)
   .component('Toast', Toast)
   .component('Divider', Divider)
   .component('Tag', Tag)
+  .component('Menu', Menu)
   .mount('#app');

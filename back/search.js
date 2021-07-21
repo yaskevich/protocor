@@ -94,7 +94,7 @@ export default {
       "format": "json",
     };
     try {
-      const response = await axios.get('https://processing.ruscorpora.ru/search-explan.xml', { params: params });
+      const response = await axios.get('https://processing.ruscorpora.ru/explain.xml', { params: params });
       // console.log(response);
       cache.putSync(id, response.data);
       return response.data;

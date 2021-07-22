@@ -11,6 +11,8 @@ import 'primeicons/primeicons.css';
 import AutoComplete from 'primevue/autocomplete';
 import Badge from 'primevue/badge';
 import Button from 'primevue/button';
+import Calendar from 'primevue/calendar';
+import Checkbox from 'primevue/checkbox';
 import Dialog from 'primevue/dialog';
 import Divider from 'primevue/divider';
 import Dropdown from 'primevue/dropdown';
@@ -21,6 +23,8 @@ import InputText from 'primevue/inputtext';
 import Menu from 'primevue/menu';
 import MultiSelect from 'primevue/multiselect';
 import Panel from 'primevue/panel';
+import Password from 'primevue/password';
+
 import ScrollTop from 'primevue/scrolltop';
 import SelectButton from 'primevue/selectbutton';
 import SplitButton from 'primevue/splitbutton';
@@ -60,4 +64,7 @@ createApp(App)
   .component('Divider', Divider)
   .component('Tag', Tag)
   .component('Menu', Menu)
+  .component('Calendar', Calendar)
+  .component('Password', Password)
+  .component('Checkbox', Checkbox)
   .mount('#app');

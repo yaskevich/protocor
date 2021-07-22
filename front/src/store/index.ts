@@ -208,6 +208,17 @@ const getData = async(route: string, id?: string): Promise<any> => {
  // console.log("No key. Fail.");
 };
 
+const regUser = async(form:Object): Promise<any> => {
+  try {
+        // const config = { headers: { Authorization: "Bearer " + state.key } };
+        const response = await axios.post('/api/reg', form);
+        console.log(response.data);
+        return response;
+     } catch (error) {
+       console.log("Cannot get", error);
+       return error;
+     }
+}
 
 export default {
   // state: readonly(state),
@@ -219,6 +230,7 @@ export default {
   doLogin,
   space000,
   getFormattedTime,
+  regUser,
   // initUser,
   // getData,
   // deleteById,

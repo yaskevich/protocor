@@ -8,6 +8,8 @@
   },
   "dependencies": {
     "@fontsource/fira-sans-extra-condensed": "^4.4.5",
+    "@vuelidate/core": "^2.0.0-alpha.21",
+    "@vuelidate/validators": "^2.0.0-alpha.18",
     "@vueuse/head": "^0.6.0",
     "axios": "^0.21.1",
     "core-js": "^3.14.0",
@@ -18,7 +20,8 @@
     "register-service-worker": "^1.7.2",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
-    "vue-router": "^4.0.0-0"
+    "vue-router": "^4.0.0-0",
+    "vuelidate": "^0.7.6"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.13",

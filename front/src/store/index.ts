@@ -70,7 +70,7 @@ const getUser = async() => {
 const doLogin = async(payload: Object): Promise<any> => {
   // if (!state.key) {
     try {
-     const response = await axios.post("/api/user/login", payload);
+     const response = await axios.post("/api/login", payload);
      if ("data" in response && "id" in response.data){
        state.user = response.data;
        state.key  = response.data.key || '';

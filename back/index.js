@@ -60,16 +60,16 @@ const __dirname = path.dirname(__filename);
 	});
 
 	app.post('/api/login', async(req, res) => {
-		// const userData = await db.getUserData(req.body["email"], req.body["password"]);
-		// if (userData && Object.keys(userData).length && !userData.hasOwnProperty("error") ) {
-		// 	console.log(req.body["email"], "<SUCCESS>");
-		// 	const token = createToken(userData);
-		// 	userData["token"] = token;
-		// 	res.json(userData);
-		// } else {
-		// 	console.log(`login attempt as [${req.body["email"]}]•[${req.body["password"]}]►${userData.error}◄`);
-		// 	res.json(userData);
-		// }
+		const userData = await db.getUserData(req.body["email"], req.body["password"]);
+		if (userData && Object.keys(userData).length && !userData.hasOwnProperty("error") ) {
+			console.log(req.body["email"], "<SUCCESS>");
+			const token = createToken(userData);
+			userData["token"] = token;
+			res.json(userData);
+		} else {
+			console.log(`login attempt as [${req.body["email"]}]•[${req.body["password"]}]►${userData.error}◄`);
+			res.json(userData);
+		}
 	});
 
 	app.get('/api/logout', (req, res) => {

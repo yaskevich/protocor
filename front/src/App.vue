@@ -3,8 +3,11 @@
   <div id="nav">
     <router-link to="/">Поиск</router-link> |
     <router-link to="/trends">Тренды</router-link> |
-    <router-link to="/about">Моё</router-link> |
-    <span v-if="!loggedIn">
+    <router-link to="/about">О проекте</router-link> |
+    <span v-if="loggedIn">
+      <router-link to="/profile">Моё</router-link>
+    </span>
+    <span v-else>
       <router-link to="/login">Войти</router-link>
     </span>
   </div>
@@ -48,10 +51,11 @@ export default defineComponent({
      console.log("app → setup");
      const dataReady = ref(false);
      // const plusOne = computed(() => count.value + 1)
+    const loggedIn = computed(() => Object.keys(store?.state?.user).length);
      return {
        dataReady,
        state: store.state,
-       loggedIn: false
+       loggedIn
      };
     },
     // computed: {

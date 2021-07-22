@@ -54,6 +54,11 @@ const __dirname = path.dirname(__filename);
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(express.static('public'));
 
+	app.post('/api/reg', async(req,res) => {
+		const result = await db.createUser(req.body, false);
+		res.json(result);
+	});
+
 	app.post('/api/login', async(req, res) => {
 		// const userData = await db.getUserData(req.body["email"], req.body["password"]);
 		// if (userData && Object.keys(userData).length && !userData.hasOwnProperty("error") ) {

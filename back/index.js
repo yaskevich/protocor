@@ -79,6 +79,10 @@ const __dirname = path.dirname(__filename);
 		// res.redirect('/login');
 	});
 
+	app.get('/api/profile', auth, async(req,res) => {
+		res.json(req.user);
+	 });
+
 	app.get('/api/test', (req, res) => {
 		res.json({ "message": "ok" });
 	});

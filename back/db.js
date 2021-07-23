@@ -55,7 +55,7 @@ if (!tablesResult.rows.length) {
 
 export default {
   async getUserDataByID(id) {
-    const res = await pool.query("SELECT from users WHERE id = $1 AND activated = TRUE", [id]);
+    const res = await pool.query("SELECT firstname, lastname, email, sex from users WHERE id = $1 AND activated = TRUE", [id]);
     return res.rows[0];
   },
   async getUserData(email, pwd) {

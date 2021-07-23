@@ -7,6 +7,7 @@ interface MyData {
     user: Object;
     freqs: any,
     key: string,
+    profile: Object,
 };
 
 interface ipmStruct {
@@ -20,6 +21,7 @@ interface ipmsStruct {
 
 const state:MyData = reactive({
   key: localStorage.getItem('key') || '',
+  profile: {},
   user: {
         queries: JSON.parse(localStorage.getItem('queries') || "[]"),
   },
@@ -58,8 +60,9 @@ const getUser = async() => {
     if(state.key) {
       try {
         const config = { headers: { Authorization: "Bearer " + state.key }, };
-        const response = await axios.get("/api/user/info", config);
-        state.user = response.data;
+        const response = await axios.get("/api/profile", config);
+        console.log("profile", response.data);
+        state.profile = response.data;
       } catch (error) {
         console.log("Cannot get user", error)
         return error;
@@ -72,8 +75,8 @@ const doLogin = async(payload: Object): Promise<any> => {
     try {
      const response = await axios.post("/api/login", payload);
      if ("data" in response && "id" in response.data){
-       state.user = response.data;
-       state.key  = response.data.key || '';
+       state.profile = response.data;
+       state.key  = response.data.token || '';
        localStorage.setItem('key', state.key);
      } else {
        console.log(response);

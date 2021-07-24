@@ -30,6 +30,14 @@ const tablesQueries = [
 		activated BOOLEAN NOT NULL DEFAULT FALSE
 	)`,
   `ALTER TABLE users OWNER TO ${process.env.PGUSER}`,
+  `CREATE TABLE IF NOT EXISTS userlogs (
+		id SERIAL PRIMARY KEY,
+		user_id integer,
+    route text,
+		corpus text not null,
+		query json
+	)`,
+  `ALTER TABLE userlogs OWNER TO ${process.env.PGUSER}`,
 ];
 
 let tablesResult = await pool.query(databaseQuery);
@@ -55,7 +63,7 @@ if (!tablesResult.rows.length) {
 
 export default {
   async getUserDataByID(id) {
-    const res = await pool.query("SELECT firstname, lastname, email, sex from users WHERE id = $1 AND activated = TRUE", [id]);
+    const res = await pool.query("SELECT id, firstname, lastname, email, sex from users WHERE id = $1 AND activated = TRUE", [id]);
     return res.rows[0];
   },
   async getUserData(email, pwd) {

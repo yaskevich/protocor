@@ -26,10 +26,10 @@
   </div>
   <div class="p-d-flex p-jc-center p-mb-4">
     <SplitButton label="Искать" @click="onSubmit" :model="buttonItems" :disabled="!params.token ? 'disabled': null"></SplitButton>
-    <Button icon="pi pi-chart-line"
+    <!-- <Button icon="pi pi-chart-line"
             @click="renderChart"
             class="p-button-success p-ml-2"
-            :disabled="!params.token ? 'disabled': null" />
+            :disabled="!params.token ? 'disabled': null" /> -->
   </div>
 
   <div class="chart-holder">
@@ -48,8 +48,8 @@
               <span v-if="word.type == 'plain'">
                 {{word.text}}
               </span>
-        <span v-else>
-                <Button :label="word.text" class="p-button-sm p-button-plain p-button-text" style="padding:0; font-size:1.25rem;color:black;"/>
+              <span v-else>
+                <Button :label="word.text" class="p-button-sm p-button-plain p-button-text token-button" :style="word.hit? 'color:darkred; font-weight:bold;': 'color:black;' "/>
               </span>
         </span>
         <Button icon="pi pi-heart"
@@ -233,9 +233,10 @@
         if (params.token) {
           try {
             const config = {
-              // headers: { Authorization: "Bearer " + state.token },
+              headers: { Authorization: "Bearer " + store.state.key },
             };
-            const response = await axios.post('/api/query', { ...params, full: isFull ? 1 : '' }); // config);
+
+            const response = store.state.key ? await axios.post('/api/auth/query', { ...params, full: isFull ? 1 : '' }, config) : await axios.post('/api/query', { ...params, full: isFull ? 1 : '' });
             resp.value = response.data;
           } catch (error) {
             console.log('Cannot get data via API', error);
@@ -318,9 +319,9 @@
       };
 
       const classify = item => {
-        if (item?.hit) {
-          return 'hit';
-        }
+        // if (item?.hit) {
+        //  return 'hit';
+        // }
 
         if (item.type === 'plain' && item.text.includes('nick')) {
           return 'nick';
@@ -403,6 +404,11 @@
   }
   .mini-button > .pi {
     font-size: 0.75rem;
+  }
+
+  .token-button{
+    padding:0  !important;
+    font-size:1.25rem !important;
   }
 
   .chart-holder {

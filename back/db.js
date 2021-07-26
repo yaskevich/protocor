@@ -108,4 +108,8 @@ export default {
     }
     return { "error": "user" };
   },
+  async saveQuery(user_id, route, corpus, query) {
+    const result = await pool.query(`INSERT INTO userlogs (user_id, route, corpus, query) VALUES($1, $2, $3, $4) RETURNING id`, [user_id, route, corpus, query]);
+    return result;
+  }
 };

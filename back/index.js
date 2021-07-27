@@ -116,6 +116,8 @@ const __dirname = path.dirname(__filename);
 	app.post('/api/auth/query', auth, async(req, res) => {
 		const cacheKey = serializeQuery(req.url, req.body);
 		// console.log("search", req.user.id, req.body);
+		const result = db.saveQuery(req.user.id, 'query', req.body.corpus|| 'main', req.body);
+		console.log("query saved");
 		const datum = await search.getFromCache(req.body.token, cacheKey);
 		console.log(datum ? '■': '□', req.method, req.url, req.body);
 		res.json(datum || await search.getSearch(cacheKey, req.body.token, req.body.corpus, req.body.dpp, req.body.spd, req.body.full));

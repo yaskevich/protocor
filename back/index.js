@@ -92,6 +92,12 @@ const __dirname = path.dirname(__filename);
 		res.sendFile(path.join(__dirname, "grammar.json"));
 	});
 
+	app.get('/api/userlogs/:route', auth, async(req, res) => {
+		const routes = ["query"];
+		const route = routes.includes(req.params.route) ? req.params.route : "query";
+		res.json(await db.getUserlogs(req.user.id, route));
+	});
+
 	app.post('/api/text', async(req, res) => {
 		const cacheKey = req.body.id;
 		const datum = await search.getFromCache(req.body.id, cacheKey);

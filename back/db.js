@@ -113,7 +113,13 @@ export default {
     return result;
   },
 	async getUserlogs(id, route) {
-		const res = await pool.query("SELECT corpus, query from userlogs WHERE user_id = $1 AND route =  $2", [id, route]);
+    let query  = "SELECT corpus, query from userlogs WHERE user_id = $1";
+    const values  = [id];
+    if (route) {
+      values.push(route);
+      query += " AND route =  $2";
+    }
+		const res = await pool.query(query, values);
 		return res.rows;
 	},
 

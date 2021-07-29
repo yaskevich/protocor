@@ -111,5 +111,10 @@ export default {
   async saveQuery(user_id, route, corpus, query) {
     const result = await pool.query(`INSERT INTO userlogs (user_id, route, corpus, query) VALUES($1, $2, $3, $4) RETURNING id`, [user_id, route, corpus, query]);
     return result;
-  }
+  },
+	async getUserlogs(id, route) {
+		const res = await pool.query("SELECT corpus, query from userlogs WHERE user_id = $1 AND route =  $2", [id, route]);
+		return res.rows;
+	},
+
 };

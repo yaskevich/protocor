@@ -92,9 +92,9 @@ const __dirname = path.dirname(__filename);
 		res.sendFile(path.join(__dirname, "grammar.json"));
 	});
 
-	app.get('/api/userlogs/:route', auth, async(req, res) => {
+	app.get('/api/userlogs/:route*?', auth, async(req, res) => {
 		const routes = ["query"];
-		const route = routes.includes(req.params.route) ? req.params.route : "query";
+		const route = routes.includes(req.params.route) ? req.params.route : "";
 		res.json(await db.getUserlogs(req.user.id, route));
 	});
 

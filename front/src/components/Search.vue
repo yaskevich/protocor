@@ -2,13 +2,13 @@
 
   <div class="p-field">
     <span v-for="item in user.queries.slice(0, 50)" :key="item">
-          <!-- v-if="item !== params.token" -->
-          <Button :label="item" v-if="item !== params.token"  class="p-button-sm p-button-plain p-button-text p-button-raised" @click="params.token = item; onSubmit($event);"/>
-        </span>
+            <!-- v-if="item !== params.token" -->
+            <Button :label="item" v-if="item !== params.token"  class="p-button-sm p-button-plain p-button-text p-button-raised" @click="params.token = item; onSubmit($event);"/>
+          </span>
     <!-- <template v-if="user.queries.length>5">
-          <Button type="button" label="Toggle" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu"/>
-          <Menu id="overlay_menu" ref="menuQueries" :model="items" :popup="true" />
-        </template> -->
+            <Button type="button" label="Toggle" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu"/>
+            <Menu id="overlay_menu" ref="menuQueries" :model="items" :popup="true" />
+          </template> -->
   </div>
 
   <!-- <div class="p-d-flex p-jc-center p-mb-4">Запрос: <span class="p-text-bold p-pl-2">{{params.token}}</span></div> -->
@@ -17,8 +17,8 @@
     <InputText type="text" v-model="params.token" @keyup.enter="onSubmit($event)" />
     <SelectButton v-model="gramMode" :options="gramButtonOptions" @click="clickGramMode">
       <template #option="slotProps">
-                    <i :class="slotProps.option.icon"></i>
-                </template>
+                      <i :class="slotProps.option.icon"></i>
+                  </template>
     </SelectButton>
     <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
 
@@ -27,9 +27,9 @@
   <div class="p-d-flex p-jc-center p-mb-4">
     <SplitButton label="Искать" @click="onSubmit" :model="buttonItems" :disabled="!params.token ? 'disabled': null"></SplitButton>
     <!-- <Button icon="pi pi-chart-line"
-            @click="renderChart"
-            class="p-button-success p-ml-2"
-            :disabled="!params.token ? 'disabled': null" /> -->
+              @click="renderChart"
+              class="p-button-success p-ml-2"
+              :disabled="!params.token ? 'disabled': null" /> -->
   </div>
 
   <div class="chart-holder">
@@ -45,12 +45,12 @@
     <div v-for="(value, key) in resp.documents" class="p-mt-1 doc p-p-2 p-shadow-3" :key="key">
       <div v-for="(snippet, index) in value.snippets" class="p-mt-2 p-mb-2 snippet p-p-1" :key="index">
         <span v-for="(word, num) in snippet.words" :class="classify(word)" :key="num">
-              <span v-if="word.type == 'plain'">
-                {{word.text}}
-              </span>
-              <span v-else>
-                <Button :label="word.text" class="p-button-sm p-button-plain p-button-text token-button" :style="word.hit? 'color:darkred; font-weight:bold;': 'color:black;' "/>
-              </span>
+                <span v-if="word.type == 'plain'">
+                  {{word.text}}
+                </span>
+        <span v-else>
+                  <Button :label="word.text" class="p-button-sm p-button-plain p-button-text token-button" :style="word.hit? 'color:darkred; font-weight:bold;': 'color:black;' "/>
+                </span>
         </span>
         <Button icon="pi pi-heart"
                 :class="'p-button-rounded mini-button ' + (likeContexts.includes(snippet.expand_context_url)?' ':'p-button-primary p-button-text')"
@@ -58,9 +58,9 @@
                 @click="like(snippet)" />
       </div>
       <span class="source-title p-pr-2">
-            {{value.document_info.title}}
-            <Button icon="pi pi-search" class="p-button-rounded p-button-primary p-button-text mini-button"  @click="openModal(value.document_info.id)" />
-          </span>
+              {{value.document_info.title}}
+              <Button icon="pi pi-search" class="p-button-rounded p-button-primary p-button-text mini-button"  @click="openModal(value.document_info.id)" />
+            </span>
       <span v-if="value.document_info.homonymy !== 'омонимия снята'" class="note">{{value.document_info.homonymy}}</span>
     </div>
   </div>
@@ -72,18 +72,18 @@
           :modal="false">
     <p class="p-m-0"></p>
     <template v-for="(value, key) in l10n">
-          <div class="p-grid p-text-left" v-if="textInfo && textInfo[key]" :key="key">
-                  <div class="p-col-4 text-property" style="color: gray;">
-                    {{value}}</div>
-                  <div class="p-col">
-                    {{textInfo[key]}}
-                  </div>
-          </div>
-        </template>
+            <div class="p-grid p-text-left" v-if="textInfo && textInfo[key]" :key="key">
+                    <div class="p-col-4 text-property" style="color: gray;">
+                      {{value}}</div>
+                    <div class="p-col">
+                      {{textInfo[key]}}
+                    </div>
+            </div>
+          </template>
     <!-- <template #footer>
-            <Button label="No" icon="pi pi-times" @click="closeModal" class="p-button-text"/>
-            <Button label="Yes" icon="pi pi-check" @click="closeModal" autofocus />
-        </template> -->
+              <Button label="No" icon="pi pi-times" @click="closeModal" class="p-button-text"/>
+              <Button label="Yes" icon="pi pi-check" @click="closeModal" autofocus />
+          </template> -->
   </Dialog>
 
   <Dialog header="Настройки выдачи"
@@ -163,6 +163,7 @@
         dpp: { min: 1, max: 50 },
         spd: { min: 1, max: 50 },
       };
+      const history = ref([]);
 
       // { "birthday": "", "style": "нейтральный", "subcorpus": "ПК электронной коммуникации", "author": "коллективный", "type": "комментарии", "created": "2006-2010", "audience_size": "большая", "grsphere": "нехудожественная, электронная коммуникация", "header": "Форум: рецензии на фильм «Службный роман»", "medium": "электронный текст", "publ_year": "2006, 2007, 2008, 2009, 2010", "source": "Интернет", "words": "0", "sentences": "502", "title": "Форум: рецензии на фильм «Службный роман»", "audience_age": "н-возраст", "grtopic": "досуг, зрелища и развлечения, искусство и культура", "editor_id": "1", "id": "bWFpbi9zdGFuZGFyZC9wb3N0MTk1MC9mb3J1bS9lbGVjdHJvY29tL3NsdXpoZWJueWpfcm9tYW5fZGlzYW1iLnhtbA==", "tagging": "manual", "audience_level": "н-уровень" }
 
@@ -217,6 +218,9 @@
 
       onBeforeMount(async () => {
         const grammar = await store.getData('grammar');
+        if (store.state.profile?.id) {
+          history.value = await store.getData('userlogs/query');
+        }
         // console.log("grammar", grammar);
         items.value = grammar.gramForm.s.map(x => ({
           label: grammar.dictionary[x],
@@ -233,10 +237,12 @@
         if (params.token) {
           try {
             const config = {
-              headers: { Authorization: "Bearer " + store.state.key },
+              headers: { Authorization: 'Bearer ' + store.state.key },
             };
 
-            const response = store.state.key ? await axios.post('/api/auth/query', { ...params, full: isFull ? 1 : '' }, config) : await axios.post('/api/query', { ...params, full: isFull ? 1 : '' });
+            const response = store.state.key
+              ? await axios.post('/api/auth/query', { ...params, full: isFull ? 1 : '' }, config)
+              : await axios.post('/api/query', { ...params, full: isFull ? 1 : '' });
             resp.value = response.data;
           } catch (error) {
             console.log('Cannot get data via API', error);
@@ -406,9 +412,9 @@
     font-size: 0.75rem;
   }
 
-  .token-button{
-    padding:0  !important;
-    font-size:1.25rem !important;
+  .token-button {
+    padding: 0 !important;
+    font-size: 1.25rem !important;
   }
 
   .chart-holder {

@@ -197,9 +197,13 @@ const getFreq =  async(token: string): Promise<any> => {
 const getData = async(route: string, id?: string): Promise<any> => {
   // if (state.key) {
     try {
-    // const config = { headers: { Authorization: "Bearer " + state.key }, "params": {} };
-     // if(id) { config["params"] = { id: id }; }
-     const config = {};
+     const config = state.key ?
+     { headers: { Authorization: "Bearer " + state.key }, "params": {} }: {};
+
+     if(id) {
+        config["params"] = { id: id };
+     }
+
      const response = await axios.get("/api/" + route, config);
      // console.log(response.data);
      return response.data;

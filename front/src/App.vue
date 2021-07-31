@@ -51,11 +51,13 @@ export default defineComponent({
      console.log("app → setup");
      const dataReady = ref(false);
      // const plusOne = computed(() => count.value + 1)
-    const loggedIn = computed(() => Object.keys(store?.state?.user).length);
-     return {
+     // const loggedIn =() => computed(() => Boolean(store?.state?.key));
+     // console.log("key", store?.state?.key);
+
+    return {
        dataReady,
        state: store.state,
-       loggedIn
+       loggedIn: store?.state?.key,
      };
     },
     // computed: {

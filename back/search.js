@@ -104,6 +104,24 @@ export default {
     }
   },
 
+  async getTokenMeta (id) {
+    const params = {
+      "mode": "main",
+      "text": "word-info",
+      "source": id,
+      "format": "json",
+    };
+    try {
+      const response = await axios.get('https://processing.ruscorpora.ru/explain.xml', { params: params });
+      // console.log(response);
+      cache.putSync(id, response.data);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      return { "error": error };
+    }
+  },
+
   async getFreq(key, token, corpus) {
     const params = {
       "mode": corpus || "main",

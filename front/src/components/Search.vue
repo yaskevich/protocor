@@ -49,7 +49,7 @@
                   {{word.text}}
                 </span>
         <span v-else>
-                  <Button :label="word.text" class="p-button-sm p-button-plain p-button-text token-button" :style="word.hit? 'color:darkred; font-weight:bold;': 'color:black;' "/>
+                  <Button :label="word.text" class="p-button-sm p-button-plain p-button-text token-button" :style="word.hit? 'color:darkred; font-weight:bold;': 'color:black;' " @click="getTokenInfo(word)"/>
                 </span>
         </span>
         <Button icon="pi pi-heart"
@@ -84,6 +84,25 @@
               <Button label="No" icon="pi pi-times" @click="closeModal" class="p-button-text"/>
               <Button label="Yes" icon="pi pi-check" @click="closeModal" autofocus />
           </template> -->
+  </Dialog>
+
+  <Dialog header="Слово"
+          v-model:visible="displayToken"
+          :breakpoints="{'960px': '75vw', '640px': '100vw'}"
+          :style="{width: '30vw'}"
+          :modal="false">
+    <p class="p-m-0"></p>
+    {{tokenInfo}}
+    <!-- <template v-for="(value, key) in l10n">
+            <div class="p-grid p-text-left" v-if="textInfo && textInfo[key]" :key="key">
+                    <div class="p-col-4 text-property" style="color: gray;">
+                      {{value}}</div>
+                    <div class="p-col">
+                      {{textInfo[key]}}
+                    </div>
+            </div>
+          </template> -->
+
   </Dialog>
 
   <Dialog header="Настройки выдачи"
@@ -146,6 +165,7 @@
       const likeContexts = reactive([]);
 
       const textInfo = ref({});
+      const tokenInfo = ref({});
       const resp = ref({});
       const params = store.state.search;
       params.token = '';
@@ -282,6 +302,7 @@
         }
       };
 
+      const displayToken = ref(false);
       const displayModal = ref(false);
       const displaySettings = ref(false);
 
@@ -324,6 +345,13 @@
         menu.value.toggle(event);
       };
 
+      const getTokenInfo = async(token) => {
+        const response = await axios.post('/api/token', { "id": token.source });
+        tokenInfo.value = response.data;
+        console.log("token", token.source, response.data);
+        displayToken.value = true;
+      };
+
       const classify = item => {
         // if (item?.hit) {
         //  return 'hit';
@@ -361,6 +389,9 @@
         chartTokens,
         toggle,
         classify,
+        getTokenInfo,
+        tokenInfo,
+        displayToken,
       };
     },
     components: {

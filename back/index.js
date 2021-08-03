@@ -105,6 +105,14 @@ const __dirname = path.dirname(__filename);
 		res.json(datum || await search.getTextMeta (req.body.id, req.body.corpus));
 	});
 
+	app.post('/api/token', async(req, res) => {
+		const cacheKey = req.body.id;
+		console.log("get token", cacheKey);
+		const datum = await search.getFromCache(cacheKey, cacheKey);
+		console.log(datum ? '■': '□', req.method, req.url, req.body);
+		res.json(datum || await search.getTokenMeta (cacheKey));
+	});
+
 	app.post('/api/freq', async(req, res) => {
 		const cacheKey = serializeQuery(req.url, { [req.body.token]: req.body.corpus || 'main'  });
 		const datum = await search.getFromCache(req.body.token, cacheKey);

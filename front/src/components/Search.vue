@@ -2,13 +2,13 @@
 
   <div class="p-field">
     <span v-for="item in user.queries.slice(0, 50)" :key="item">
-            <!-- v-if="item !== params.token" -->
-            <Button :label="item" v-if="item !== params.token"  class="p-button-sm p-button-plain p-button-text p-button-raised" @click="params.token = item; onSubmit($event);"/>
-          </span>
+              <!-- v-if="item !== params.token" -->
+              <Button :label="item" v-if="item !== params.token"  class="p-button-sm p-button-plain p-button-text p-button-raised" @click="params.token = item; onSubmit($event);"/>
+            </span>
     <!-- <template v-if="user.queries.length>5">
-            <Button type="button" label="Toggle" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu"/>
-            <Menu id="overlay_menu" ref="menuQueries" :model="items" :popup="true" />
-          </template> -->
+              <Button type="button" label="Toggle" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu"/>
+              <Menu id="overlay_menu" ref="menuQueries" :model="items" :popup="true" />
+            </template> -->
   </div>
 
   <!-- <div class="p-d-flex p-jc-center p-mb-4">Запрос: <span class="p-text-bold p-pl-2">{{params.token}}</span></div> -->
@@ -17,8 +17,8 @@
     <InputText type="text" v-model="params.token" @keyup.enter="onSubmit($event)" />
     <SelectButton v-model="gramMode" :options="gramButtonOptions" @click="clickGramMode">
       <template #option="slotProps">
-                      <i :class="slotProps.option.icon"></i>
-                  </template>
+                        <i :class="slotProps.option.icon"></i>
+                    </template>
     </SelectButton>
     <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
 
@@ -27,9 +27,9 @@
   <div class="p-d-flex p-jc-center p-mb-4">
     <SplitButton label="Искать" @click="onSubmit" :model="buttonItems" :disabled="!params.token ? 'disabled': null"></SplitButton>
     <!-- <Button icon="pi pi-chart-line"
-              @click="renderChart"
-              class="p-button-success p-ml-2"
-              :disabled="!params.token ? 'disabled': null" /> -->
+                @click="renderChart"
+                class="p-button-success p-ml-2"
+                :disabled="!params.token ? 'disabled': null" /> -->
   </div>
 
   <div class="chart-holder">
@@ -45,12 +45,14 @@
     <div v-for="(value, key) in resp.documents" class="p-mt-1 doc p-p-2 p-shadow-3" :key="key">
       <div v-for="(snippet, index) in value.snippets" class="p-mt-2 p-mb-2 snippet p-p-1" :key="index">
         <span v-for="(word, num) in snippet.words" :class="classify(word)" :key="num">
-                <span v-if="word.type == 'plain'">
-                  {{word.text}}
-                </span>
+                  <span v-if="word.type == 'plain'">
+                    {{word.text}}
+                  </span>
         <span v-else>
-                  <Button :label="word.text" class="p-button-sm p-button-plain p-button-text token-button" :style="word.hit? 'color:darkred; font-weight:bold;': 'color:black;' " @click="getTokenInfo(word)"/>
-                </span>
+                    <Button class="p-button-sm p-button-plain p-button-text token-button " :style="word.hit? 'color:darkred; font-weight:bold;': 'color:black;' " @click="getTokenInfo(word)">
+                        <span :class="word.obsc? 'obsc': ''" :title="word.obsc? word.text: ''">{{word.text}}</span>
+        </Button>
+        </span>
         </span>
         <Button icon="pi pi-heart"
                 :class="'p-button-rounded mini-button ' + (likeContexts.includes(snippet.expand_context_url)?' ':'p-button-primary p-button-text')"
@@ -58,9 +60,9 @@
                 @click="like(snippet)" />
       </div>
       <span class="source-title p-pr-2">
-              {{value.document_info.title}}
-              <Button icon="pi pi-search" class="p-button-rounded p-button-primary p-button-text mini-button"  @click="openModal(value.document_info.id)" />
-            </span>
+                {{value.document_info.title}}
+                <Button icon="pi pi-search" class="p-button-rounded p-button-primary p-button-text mini-button"  @click="openModal(value.document_info.id)" />
+              </span>
       <span v-if="value.document_info.homonymy !== 'омонимия снята'" class="note">{{value.document_info.homonymy}}</span>
     </div>
   </div>
@@ -72,18 +74,18 @@
           :modal="false">
     <p class="p-m-0"></p>
     <template v-for="(value, key) in l10n">
-            <div class="p-grid p-text-left" v-if="textInfo && textInfo[key]" :key="key">
-                    <div class="p-col-4 text-property" style="color: gray;">
-                      {{value}}</div>
-                    <div class="p-col">
-                      {{textInfo[key]}}
-                    </div>
-            </div>
-          </template>
+              <div class="p-grid p-text-left" v-if="textInfo && textInfo[key]" :key="key">
+                      <div class="p-col-4 text-property" style="color: gray;">
+                        {{value}}</div>
+                      <div class="p-col">
+                        {{textInfo[key]}}
+                      </div>
+              </div>
+            </template>
     <!-- <template #footer>
-              <Button label="No" icon="pi pi-times" @click="closeModal" class="p-button-text"/>
-              <Button label="Yes" icon="pi pi-check" @click="closeModal" autofocus />
-          </template> -->
+                <Button label="No" icon="pi pi-times" @click="closeModal" class="p-button-text"/>
+                <Button label="Yes" icon="pi pi-check" @click="closeModal" autofocus />
+            </template> -->
   </Dialog>
 
   <Dialog header="Слово"
@@ -94,14 +96,14 @@
     <p class="p-m-0"></p>
     {{tokenInfo}}
     <!-- <template v-for="(value, key) in l10n">
-            <div class="p-grid p-text-left" v-if="textInfo && textInfo[key]" :key="key">
-                    <div class="p-col-4 text-property" style="color: gray;">
-                      {{value}}</div>
-                    <div class="p-col">
-                      {{textInfo[key]}}
-                    </div>
-            </div>
-          </template> -->
+              <div class="p-grid p-text-left" v-if="textInfo && textInfo[key]" :key="key">
+                      <div class="p-col-4 text-property" style="color: gray;">
+                        {{value}}</div>
+                      <div class="p-col">
+                        {{textInfo[key]}}
+                      </div>
+              </div>
+            </template> -->
 
   </Dialog>
 
@@ -345,10 +347,10 @@
         menu.value.toggle(event);
       };
 
-      const getTokenInfo = async(token) => {
-        const response = await axios.post('/api/token', { "id": token.source });
+      const getTokenInfo = async token => {
+        const response = await axios.post('/api/token', { id: token.source });
         tokenInfo.value = response.data;
-        console.log("token", token.source, response.data);
+        console.log('token', token.source, response.data);
         displayToken.value = true;
       };
 
@@ -458,6 +460,13 @@
 
   .text-property:first-letter {
     text-transform: capitalize;
+  }
+
+  .obsc {
+    background: linear-gradient(to right, red 20%, orange 20% 40%, yellow 40% 60%, green 60% 80%, blue 80%);
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
 </style>

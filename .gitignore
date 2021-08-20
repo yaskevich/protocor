@@ -76,6 +76,8 @@ typings/
 # dotenv environment variables file
 .env
 .env.test
+conv/.env
+conv/package-lock.json
 back/.env
 back/package-lock.json
 back/node_modules/

@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "async-csv": "^2.1.3"
+    "async-csv": "^2.1.3",
+    "dotenv": "^10.0.0",
+    "pg": "^8.7.1"
   }
 }

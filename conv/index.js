@@ -19,13 +19,29 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const idsArray = JSON.parse(fs.readFileSync('identifiers.json', 'utf8'));
 const ids = Object.fromEntries(idsArray.map(x => [x.id, x]));
 
-const featuresId = [];
+const featuresIds = {};
 
-const columns = ['path', 'header', 'created', 'editor_id'];
+const featuresInsert = `INSERT INTO features (groupid, ru) VALUES($1, $2) RETURNING id`;
+
+async function updateFeatureId(field, content, num){
+    const uuid = field+content;
+	if (!featuresIds?.[uuid]){
+		try {
+            const result  = await pool.query(featuresInsert, [field, content]);
+            featuresIds[uuid] = result.rows[0].id;
+        } catch (e){
+            console.error(num, e.detail);
+        }
+	}
+    return featuresIds[uuid];
+}
+
+
+const columns = ['filepath', 'fileheader', 'created', 'editor_id', 'tagging'];
 
 const schemes = [
 	`DROP TABLE IF EXISTS texts`,
-	`CREATE TABLE IF NOT EXISTS texts (id SERIAL PRIMARY KEY, filepath text, header text, created text, features json, editor_id integer)`,
+	`CREATE TABLE IF NOT EXISTS texts (id SERIAL PRIMARY KEY, filepath text, fileheader text, created text, corpus text, features integer[], editor_id integer, tagging text)`,
 	`DROP TABLE IF EXISTS features`,
 	`CREATE TABLE IF NOT EXISTS features (
 			id SERIAL PRIMARY KEY,
@@ -36,6 +52,8 @@ const schemes = [
 	)`,
 ];
 
+const columns4query = ['corpus', ...columns, 'features'];
+const textInsert = `INSERT INTO texts (${columns4query.join(", ")}) VALUES(${columns4query.map((x,i)=> '$'+ ++i).join(", ")}) RETURNING id`;
 
 const getRuTitle = (x) => { return ids?.[x]?.['ru'] || x; }
 	
@@ -52,9 +70,13 @@ async function processFile(fileName) {
         catch(e) {
             console.log(e.message);
         }
+		
+		const corpus = process.argv[2].split(/\W/).splice(-2, 1).shift();
 
         const fieldRow = csvArr.shift();
 		// console.log(fieldRow);
+		fieldRow[fieldRow.indexOf("path")] = "filepath";
+		fieldRow[fieldRow.indexOf("header")] = "fileheader";
 
 		let rowNumber = 0;
 
@@ -63,7 +85,7 @@ async function processFile(fileName) {
 			// await pool.query('DROP table IF EXISTS ' + table + ' CASCADE');
 			await pool.query(schemes[table]);
 		}
-		await pool.end();
+		
 
 
         // for (const row of csvArr) {
@@ -74,25 +96,37 @@ async function processFile(fileName) {
             const values = [];
 			let skip = false;
             
+			const props = [];
+			const valuesDict = {};
+			
             for (let i=0; i < row.length; i++) {
                 const data  = row[i];
-                // getRuTitle
-				if(data) {
-					console.log(`${fieldRow[i]} [${getRuTitle(fieldRow[i])}] ${data}`);
+				const title  = fieldRow[i];
+				
+				if (columns.includes(title)) {
+					valuesDict[title] = data;
+				} else if(data) {
+					props.push(await updateFeatureId(title, data, rowNumber));
+					// console.log(`${title} [${getRuTitle(title)}] ${data}`);
 				}
             }
 			
-			
-			if(rowNumber > 1) {
-				return;
+			try {
+			  await pool.query(textInsert, [corpus].concat(columns.map(x => valuesDict[x])).concat([props]));
+			} catch (err) {
+			  console.log(err.stack);
 			}
+			
+			// console.log("props", props);
+			
+			// if(rowNumber > 1) {
+				// process.exit();
+			// }
 				
-    
         }
         
-        // await pool.end();
-
-        
+        await pool.end();
+		console.log("...done");
         
     } else {
         console.log("Path to the file with data is incorrect!");

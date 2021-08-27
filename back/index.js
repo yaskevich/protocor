@@ -137,6 +137,11 @@ const __dirname = path.dirname(__filename);
 		res.json(datum || await search.getSearch(cacheKey, req.body.token, req.body.corpus, req.body.dpp, req.body.spd, req.body.full));
 	});
 
+	app.all('/api/features', async(req, res) => {
+		const datum = await db.getFeaturesUnique();
+		res.json(datum);
+	});
+
 	app.listen(port);
 	// console.log(`Running at port ${port}`);
 })()

@@ -122,5 +122,12 @@ export default {
 		const res = await pool.query(query, values);
 		return res.rows;
 	},
+	async getFeaturesUnique() {
+    // const query  = "select array_agg(distinct u.val) uniquefeatures from texts t cross join lateral unnest(t.features) as u(val)";
+    const query  = "SELECT prop, count(prop) FROM texts, unnest(features) AS prop group by prop";
+		const res = await pool.query(query);
+		// return res?.rows[0]?.uniquefeatures;
+		return res?.rows;
+	},
 
 };

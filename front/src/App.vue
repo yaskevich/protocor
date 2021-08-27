@@ -3,6 +3,7 @@
   <div id="nav">
     <router-link to="/">Поиск</router-link> |
     <router-link to="/trends">Тренды</router-link> |
+    <router-link to="/corpora">Корпуса</router-link> |
     <router-link to="/about">О проекте</router-link> |
     <span v-if="loggedIn">
       <router-link to="/profile">Моё</router-link>

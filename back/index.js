@@ -137,8 +137,9 @@ const __dirname = path.dirname(__filename);
 		res.json(datum || await search.getSearch(cacheKey, req.body.token, req.body.corpus, req.body.dpp, req.body.spd, req.body.full));
 	});
 
-	app.all('/api/features', async(req, res) => {
-		const datum = await db.getFeaturesUnique();
+	app.all('/api/features/:corpus*?', async(req, res) => {
+		console.log("corpus", req.params.corpus);
+		const datum = await db[req.params.corpus? 'getFeaturesDict' : 'getFeaturesUnique']();
 		res.json(datum);
 	});
 

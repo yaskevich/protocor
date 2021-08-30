@@ -42,7 +42,7 @@ const columns = ['filepath', 'fileheader', 'created', 'editor_id', 'tagging'];
 
 const schemes = [
   `DROP TABLE IF EXISTS texts`,
-  `CREATE TABLE IF NOT EXISTS texts (id SERIAL PRIMARY KEY, filepath text, fileheader text, created text, corpus text, features integer[], editor_id integer, tagging text)`,
+  `CREATE TABLE IF NOT EXISTS texts (id SERIAL PRIMARY KEY, filepath text, fileheader text, created text, corpus text, features integer[], editor_id text, tagging text)`,
   `DROP TABLE IF EXISTS features`,
   `CREATE TABLE IF NOT EXISTS features (
 			id SERIAL PRIMARY KEY,
@@ -67,9 +67,20 @@ async function processFile(fileName) {
     let csvArr = [];
 
     try {
-      csvArr = await csv.parse(csvString, { delimiter: ";" ,  quote: '"', ltrim: true, rtrim: true, });
+      csvArr = await csv.parse(csvString, {
+        delimiter: ";",
+        // quote: "'",
+        // ltrim: true,
+        // rtrim: true,
+        relax: true,
+        trim: true,
+        skip_empty_lines: true,
+        // columns: true,
+       });
     } catch (e) {
       console.log(e.message);
+      console.log("...exiting because of error");
+      process.exit();
     }
 
     const corpus = process.argv[2].split(/\W/).splice(-2, 1).shift();

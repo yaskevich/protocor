@@ -4,14 +4,30 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import Search from '@/components/Search.vue'; // @ is an alias to /src
+<script>
 
-@Options({
-  components: {
-    Search,
-  },
-})
-export default class Home extends Vue {}
+  import { ref, reactive, defineComponent, onBeforeMount, } from 'vue';
+  import store from '../store';
+
+  export default defineComponent({
+    setup() {
+      const data = ref([]);
+
+      onBeforeMount(async () => {
+
+        if (store.state.profile?.id) {
+          data.value = await store.getData('features/main');
+          console.log("data", data.value);
+        }
+
+      });
+
+      return {
+
+      };
+    },
+    components: {
+    },
+  });
+
 </script>

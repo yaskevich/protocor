@@ -139,8 +139,11 @@ const __dirname = path.dirname(__filename);
 
 	app.all('/api/features/:corpus*?', async(req, res) => {
 		console.log("corpus", req.params.corpus);
-		const datum = await db[req.params.corpus? 'getFeaturesDict' : 'getFeaturesUnique']();
-		res.json(datum);
+		const corpus = req.params.corpus || "main";
+		const props = await db.getFeaturesUnique();
+		const dict  = await db.getFeaturesDict();
+		const count = await db.getCorpusCount(corpus);
+		res.json({ "count": count, "dict": dict, "props": props, });
 	});
 
 	app.listen(port);

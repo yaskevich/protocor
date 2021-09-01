@@ -123,13 +123,14 @@ export default {
 		return res.rows;
 	},
 	async getFeaturesUnique() {
-    const query  = "SELECT prop, count(prop) FROM texts, unnest(features) AS prop group by prop";
+    const query  = "SELECT prop, count(prop)::int FROM texts, unnest(features) AS prop group by prop";
 		const res = await pool.query(query);
 		return res?.rows;
 	},
 	async getFeaturesDict() {
     // const query  = "select array_agg(distinct u.val) uniquefeatures from texts t cross join lateral unnest(t.features) as u(val)";
-    const query  = "select id, groupid, ru from features where id in (select unnest(array_agg(distinct u.val)) uniquefeatures from texts t cross join lateral unnest(t.features) as u(val))";
+    // , 'topic'
+    const query  = "select id, groupid, ru from features where groupid in ('audience_age', 'audience_level', 'audience_size', 'created', 'medium') AND id in (select unnest(array_agg(distinct u.val)) uniquefeatures from texts t cross join lateral unnest(t.features) as u(val))";
 		const res = await pool.query(query);
     // return res?.rows[0]?.uniquefeatures;
 		return res?.rows;

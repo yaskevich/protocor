@@ -135,4 +135,9 @@ export default {
     // return res?.rows[0]?.uniquefeatures;
 		return res?.rows;
 	},
+  async getCorpusCount(corpus) {
+    const query  = "SELECT count(*)::int FROM texts where corpus = $1";
+    const res = await pool.query(query, [corpus]);
+    return res?.rows?.[0]?.count;
+  },
 };

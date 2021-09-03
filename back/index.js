@@ -93,7 +93,7 @@ const __dirname = path.dirname(__filename);
 	});
 
 	app.get('/api/userlogs/:route*?', auth, async(req, res) => {
-		const routes = ["query"];
+		const routes = ["query", "trend"];
 		const route = routes.includes(req.params.route) ? req.params.route : "";
 		res.json(await db.getUserlogs(req.user.id, route));
 	});

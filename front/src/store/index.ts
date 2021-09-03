@@ -32,6 +32,7 @@ const state:MyData = reactive({
     spd: Number(localStorage.getItem('spd')) || 10,
     dpp: Number(localStorage.getItem('dpp')) || 10,
   },
+  trends: [],
   error: "",
 });
 

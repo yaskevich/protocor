@@ -137,6 +137,11 @@ const __dirname = path.dirname(__filename);
 		res.json(datum || await search.getSearch(cacheKey, req.body.token, req.body.corpus, req.body.dpp, req.body.spd, req.body.full));
 	});
 
+	app.post('/api/auth/log', auth, async(req, res) => {
+		const result = db.saveQuery(req.user.id, 'trend', req.body.corpus|| 'main', req.body);
+		res.json({"result": "ok"});
+	});
+
 	app.all('/api/features/:corpus*?', async(req, res) => {
 		console.log("corpus", req.params.corpus);
 		const corpus = req.params.corpus || "main";

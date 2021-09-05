@@ -1,7 +1,7 @@
 <template>
 
   <div class="p-pb-4" v-if="count">
-    Корпус содержит <span class="p-text-bold">{{zeropad(count)}}</span> текст{{countMascSg(count)}}
+    Корпус содержит <span class="p-text-bold">{{zeropad(count)}}</span> текст{{countNoun(count)}}
   </div>
   <div v-for="v in dict">
     <div class="p-grid p-jc-center p-mb-4">
@@ -35,11 +35,6 @@
         }, {});
       const groupByBrand = groupBy('groupid');
 
-      const countMascSg = num => {
-        const last = num.toString().slice(-1);
-        return last == 1 ? '' : ['2', '3', '4'].includes(last) ? 'а' : 'ов';
-      };
-
       const percent = (num, all) => {
            return ((num/all) * 100).toFixed(2);
       };
@@ -56,9 +51,9 @@
         dict,
         counts,
         count,
-        countMascSg,
         zeropad: store.space000,
         percent,
+        countNoun: store.countNoun,
       };
     },
     components: {},

@@ -41,8 +41,8 @@
   </div>
 
   <div v-if="resp.hasOwnProperty('corp_stat')" class="p-mt-6">
-    <div class="">Корпус: {{store.space000(resp.corp_stat.stats[1].num)}} слов, {{store.space000(resp.corp_stat.stats[0].num)}} документов</div>
-    <div>«<span class="p-text-bold">{{user.queries[0]}}</span>»: {{store.space000(resp.found_stat.stats[1].num)}} вхождений, {{store.space000(resp.found_stat.stats[0].num)}}
+    <div class="">Корпус: {{store.space000(resp.corp_stat.stats[1].num)}} слов{{countNoun(resp.corp_stat.stats[1].num, 1)}}, {{store.space000(resp.corp_stat.stats[0].num)}} документ{{countNoun(resp.corp_stat.stats[0].num)}}</div>
+    <div>«<span class="p-text-bold">{{user.queries[0]}}</span>»: {{store.space000(resp.found_stat.stats[1].num)}} вхождени{{countNoun(resp.found_stat.stats[1].num, 2)}}, {{store.space000(resp.found_stat.stats[0].num)}}
       документов
     </div>
     <Divider />
@@ -415,6 +415,7 @@
         getTokenInfo,
         tokenInfo,
         displayToken,
+        countNoun: store.countNoun,
       };
     },
     components: {

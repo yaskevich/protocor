@@ -246,6 +246,7 @@
         const grammar = await store.getData('grammar');
         if (store.state.profile?.id) {
           history.value = await store.getData('userlogs/query');
+          user.queries = [...new Set(history.value.map(x=> x.query.token))];
         }
         // console.log("grammar", grammar);
         items.value = grammar.gramForm.s.map(x => ({

@@ -9,12 +9,33 @@ import bodyParser from 'body-parser';
 import passport from 'passport';
 import passportJWT from "passport-jwt";
 import jwt from 'jsonwebtoken';
+
+import swaggerJsDoc from 'swagger-jsdoc';
+import swaggerExpress from 'swagger-ui-express';
+
 import db from './db.js';
 
 import search from './search.js';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const swaggerOptions = {
+	swaggerDefinition: {
+    info: {
+      version: "2.0.0",
+      title: "Ruscorpora API",
+      description: "Ruscorpora API Information",
+			"contact": {
+		    "name": "Ruscorpora Development Team",
+		    "url": "http://dev.ruscorpora.ru/api",
+		    "email": "dev@ruscorpora.ru"
+		  },
+      servers: ["http://localhost:3061"]
+    }
+  },
+  apis: ["index.js"]
+};
 
 (async () => {
 
@@ -46,6 +67,9 @@ const __dirname = path.dirname(__filename);
 
 	passport.use(strategy);
 	const auth = passport.authenticate('jwt', {session: false});
+
+	const swaggerDocs = swaggerJsDoc(swaggerOptions);
+	app.use("/api/docs", swaggerExpress.serve, swaggerExpress.setup(swaggerDocs));
 	// app.use(compression());
 	// app.set('trust proxy', 1);
 	app.use(passport.initialize());
@@ -54,6 +78,16 @@ const __dirname = path.dirname(__filename);
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(express.static('public'));
 
+	// Routes
+	/**
+	* @swagger
+	* /api/reg:
+	*  post:
+	*    description: Create a new user
+	*    responses:
+	*      '200':
+	*        description: A successful response
+	*/
 	app.post('/api/reg', async(req,res) => {
 		const result = await db.createUser(req.body, false);
 		res.json(result);

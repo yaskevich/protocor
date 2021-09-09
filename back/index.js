@@ -153,7 +153,44 @@ const swaggerOptions = {
 		console.log(datum ? '■': '□', req.method, req.url, req.body);
 		res.json(datum || await search.getFreq(cacheKey, req.body.token, req.body.corpus));
 	});
-
+	/**
+	 * @swagger
+	 * /api/query:
+	 *    post:
+	 *      description: Search in corpus
+	 *    parameters:
+	 *      - name: corpus
+	 *        in: query
+	 *        description: Subcorpus ID where to search
+	 *        required: false
+	 *        schema:
+	 *          type: string
+	 *          format: string
+	 *      - name: token
+	 *        in: query
+	 *        description: token to search
+	 *        required: true
+	 *        schema:
+	 *          type: string
+	 *          format: string
+	 *      - name: dpp
+	 *        in: query
+	 *        description: number of documents to return
+	 *        required: false
+	 *        schema:
+	 *          type: integer
+	 *          format: int32
+	 *      - name: spd
+	 *        in: query
+	 *        description: number of snippets per document
+	 *        required: false
+	 *        schema:
+	 *          type: integer
+	 *          format: int32
+	 *    responses:
+	 *      '200':
+	 *        description: search results in JSON format
+	 */
 	app.post('/api/query', async(req, res) => {
 		const cacheKey = serializeQuery(req.url, req.body);
 		const datum = await search.getFromCache(req.body.token, cacheKey);

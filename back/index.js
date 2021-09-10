@@ -219,7 +219,8 @@ const swaggerOptions = {
 		const props = await db.getFeaturesUnique();
 		const dict  = await db.getFeaturesDict();
 		const count = await db.getCorpusCount(corpus);
-		res.json({ "count": count, "dict": dict, "props": props, });
+		const meta = await db.getMetafields('ru');
+		res.json({ count, dict, props, meta });
 	});
 
 	app.listen(port);

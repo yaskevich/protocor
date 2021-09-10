@@ -141,4 +141,9 @@ export default {
     const res = await pool.query(query, [corpus]);
     return res?.rows?.[0]?.count;
   },
+  async getMetafields(lang) {
+    const query  = "SELECT * from metafields";
+    const {rows} = await pool.query(query);
+    return rows ? Object.assign({}, ...rows.map(x => ({ [x.name]: x[lang] }))) : {};
+  },
 };

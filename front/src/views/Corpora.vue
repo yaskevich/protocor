@@ -5,7 +5,7 @@
   </div>
   <div v-for="v in dict">
     <div class="p-grid p-jc-center p-mb-4">
-      <Panel :header="v[0]['groupid']" style="min-width:300px;">
+      <Panel :header="fields[v[0]['groupid']]" style="min-width:300px;">
         <div v-for="obj in v" class="p-grid p-ai-center vertical-container p-pb-2" :title="percent(counts.get(obj.id), count)">
           <div class="p-col p-text-left">{{obj.ru}}</div>
           <div class="p-col p-text-right">{{counts.get(obj.id)}}</div>
@@ -26,6 +26,7 @@
       const dict = ref([]);
       const counts = ref();
       const count = ref(0);
+      const fields = ref({});
 
       const groupBy = key => array =>
         array.reduce((objectsByKeyValue, obj) => {
@@ -45,6 +46,7 @@
         counts.value = new Map(data.props.map(i => [i.prop, i.count]));
         dict.value = groupByBrand(data.dict);
         count.value = data.count;
+        fields.value = data.meta;
       });
 
       return {
@@ -54,6 +56,7 @@
         zeropad: store.space000,
         percent,
         countNoun: store.countNoun,
+        fields,
       };
     },
     components: {},

@@ -220,7 +220,21 @@ const swaggerOptions = {
 		const dict  = await db.getFeaturesDict();
 		const count = await db.getCorpusCount(corpus);
 		const meta = await db.getMetafields('ru');
-		res.json({ count, dict, props, meta });
+		const corpora = [
+			{ name: 'основной', id: 'main' },
+			{ name: 'синтаксический', id: 'syntax' },
+			{ name: 'газетный', id: 'paper' },
+			{ name: 'параллельный', id: 'para' },
+			{ name: 'обучающий', id: 'school' },
+			{ name: 'диалектный', id: 'dialect' },
+			{ name: 'поэтический', id: 'poetic' },
+			{ name: 'устный', id: 'spoken' },
+			{ name: 'акцентологический', id: 'accent' },
+			{ name: 'мультимедийный', id: 'murco' },
+			{ name: 'мультипарк', id: 'miltiparc' },
+			{ name: 'исторический', id: 'oldrus' },
+		];
+		res.json({ corpora, count, dict, props, meta });
 	});
 
 	app.listen(port);

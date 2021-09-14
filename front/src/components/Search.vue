@@ -28,7 +28,7 @@
     <!-- <Button label="Искать" @click="onSubmit($event)" :disabled="!params.token ? 'disabled': null"/> -->
   </div>
   <div class="p-d-flex p-jc-center p-mb-4">
-    <Dropdown v-model="selectedCorpus" :options="corpora" optionValue="id" optionLabel="name" :filter="true" placeholder="Select a City" class="p-mr-2" />
+    <Dropdown v-model="selectedCorpus" :options="corpora" optionValue="id" optionLabel="name" :filter="true" placeholder="Выберите корпус" class="p-mr-2" />
     <SplitButton label="Искать" @click="onSubmit" :model="buttonItems" :disabled="!params.token ? 'disabled': null"></SplitButton>
     <!-- <Button icon="pi pi-chart-line"
                   @click="renderChart"
@@ -169,7 +169,7 @@
       // const vuerouter = useRoute();
       // const id = vuerouter.params.id;
       const likeContexts = reactive([]);
-
+      const corpora =  reactive([]);
       const textInfo = ref({});
       const tokenInfo = ref({});
       const resp = ref({});
@@ -254,6 +254,10 @@
           // icon: 'pi pi-upload',
         }));
         // console.log("Grammar items", items);
+
+        const data = await store.getData('features/spoken');
+        Object.assign(corpora, {} , data.corpora );
+
       });
 
       const renderChart = async () => {
@@ -370,20 +374,7 @@
         return '';
       };
       const selectedCorpus = ref('main');
-      const corpora = [
-        { name: 'основной', id: 'main' },
-        { name: 'синтаксический', id: 'syntax' },
-        { name: 'газетный', id: 'paper' },
-        { name: 'параллельный', id: 'para' },
-        { name: 'обучающий', id: 'school' },
-        { name: 'диалектный', id: 'dialect' },
-        { name: 'поэтический', id: 'poetic' },
-        { name: 'устный', id: 'spoken' },
-        { name: 'акцентологический', id: 'accent' },
-        { name: 'мультимедийный', id: 'murco' },
-        { name: 'мультипарк', id: 'miltiparc' },
-        { name: 'исторический', id: 'oldrus' },
-      ];
+
 
       return {
         selectedCorpus,

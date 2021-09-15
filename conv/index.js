@@ -83,7 +83,31 @@ async function processFile(fileName) {
       process.exit();
     }
 
-    const corpus = process.argv[2].split(/\W/).splice(-2, 1).shift();
+    const corpusFile = process.argv[2].split(/\W/).splice(-2, 1).shift();
+
+    const corpusMapping = {
+      "accent_main ": "accent",
+      "accent_stihi ": "stihi",
+      "birchbark ": "birchbank",
+      "dialect ": "dialect",
+      "mid_rus ": "midrus",
+      "multi ": "multiparc",              // ???
+      "multiparc_eng-rus ": "multiparc",  // ???
+      "multiparc_rus ": "multiparc",      // ???
+      "murco ": "murco",
+      "old_rus ": "oldrus",
+      "orthlib ": "orthlib",
+      "paper ": "paper",
+      "para ": "para",
+      "poetic ": "poetic",
+      "school ": "school",
+      "source ": "main",
+      "spoken ": "spoken",
+      "standard ": "main",
+      // 'regional', syntax',
+    };
+
+    const corpus = corpusMapping[corpusFile];
 
     const fieldRow = csvArr.shift();
     // console.log(fieldRow);

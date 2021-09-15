@@ -222,7 +222,6 @@ const swaggerOptions = {
 		const meta = await db.getMetafields('ru');
 		const corpora = [
 			{ name: 'основной', id: 'main' },
-			{ name: 'синтаксический', id: 'syntax' },
 			{ name: 'газетный', id: 'paper' },
 			{ name: 'параллельный', id: 'para' },
 			{ name: 'обучающий', id: 'school' },
@@ -231,8 +230,15 @@ const swaggerOptions = {
 			{ name: 'устный', id: 'spoken' },
 			{ name: 'акцентологический', id: 'accent' },
 			{ name: 'мультимедийный', id: 'murco' },
-			{ name: 'мультипарк', id: 'miltiparc' },
-			{ name: 'исторический', id: 'oldrus' },
+			{ name: 'мультипарк', id: 'multiparc' },
+			{ name: 'древнерусский', id: 'oldrus' },
+			{ name: 'старорусский', id: 'midrus' },
+			{ name: 'церковнославянский', id: 'orthlib' },
+			{ name: 'берестяные грамоты', id: 'birchbank' },
+			{ name: 'газетный региональный', id: 'regional' },
+			{ name: 'акцентологический (стихи)', id: 'stihi' },
+
+			{ name: 'синтаксический', id: 'syntax' },
 		];
 		res.json({ corpora, count, dict, props, meta });
 	});

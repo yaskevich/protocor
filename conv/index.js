@@ -16,6 +16,28 @@ import { dirname } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+const corpusMapping = {
+  "accent_main": "accent",
+  "accent_stihi": "stihi",
+  "birchbark": "birchbank",
+  "dialect": "dialect",
+  "mid_rus": "midrus",
+  "multi": "multiparc",              // ???
+  "multiparc_eng-rus": "multiparc",  // ???
+  "multiparc_rus": "multiparc",      // ???
+  "murco": "murco",
+  "old_rus": "oldrus",
+  "orthlib": "orthlib",
+  "paper": "paper",
+  "para": "para",
+  "poetic": "poetic",
+  "school": "school",
+  "source": "main",
+  "spoken": "spoken",
+  "standard": "main",
+  // 'regional', syntax',
+};
+
 const idsArray = JSON.parse(fs.readFileSync('identifiers.json', 'utf8'));
 const ids = Object.fromEntries(idsArray.map(x => [x.id, x]));
 
@@ -36,7 +58,6 @@ async function updateFeatureId(field, content, num) {
   }
   return featuresIds[uuid];
 }
-
 
 const columns = ['filepath', 'fileheader', 'created', 'editor_id', 'tagging'];
 
@@ -60,10 +81,21 @@ const textInsert = `INSERT INTO texts (${columns4query.join(", ")}) VALUES(${col
 const getRuTitle = (x) => { return ids?.[x]?.['ru'] || x; }
 
 
-async function processFile(fileName) {
+async function processFile(filePath) {
+  const corpusFile = path.basename(filePath, '.csv');
+  const mark = ` ● ${corpusFile}`;
+  console.time(mark);
+  const corpus = corpusMapping[corpusFile];
 
-  if (fs.existsSync(fileName)) {
-    const csvString = fs.readFileSync(path.join(__dirname, fileName), 'utf-8');
+  if(!corpus){
+    console.log(`Wrong corpus file name "${corpusFile}". File will be ignored!`);
+    return;
+  }
+  // console.log("corpus file → ID", corpusFile, corpus);
+  // return;
+
+  if (fs.existsSync(filePath)) {
+    const csvString = fs.readFileSync(filePath, 'utf-8');
     let csvArr = [];
 
     try {
@@ -79,36 +111,9 @@ async function processFile(fileName) {
        });
     } catch (e) {
       console.log(e.message);
-      console.log("...exiting because of error");
+      console.log("Parsing error! File will be ignored!");
       process.exit();
     }
-
-    const corpusFile = process.argv[2].split(/\W/).splice(-2, 1).shift();
-
-    const corpusMapping = {
-      "accent_main ": "accent",
-      "accent_stihi ": "stihi",
-      "birchbark ": "birchbank",
-      "dialect ": "dialect",
-      "mid_rus ": "midrus",
-      "multi ": "multiparc",              // ???
-      "multiparc_eng-rus ": "multiparc",  // ???
-      "multiparc_rus ": "multiparc",      // ???
-      "murco ": "murco",
-      "old_rus ": "oldrus",
-      "orthlib ": "orthlib",
-      "paper ": "paper",
-      "para ": "para",
-      "poetic ": "poetic",
-      "school ": "school",
-      "source ": "main",
-      "spoken ": "spoken",
-      "standard ": "main",
-      // 'regional', syntax',
-    };
-
-    const corpus = corpusMapping[corpusFile];
-
     const fieldRow = csvArr.shift();
     // console.log(fieldRow);
     fieldRow[fieldRow.indexOf("path")] = "filepath";
@@ -145,21 +150,11 @@ async function processFile(fileName) {
         console.log(err.stack);
       }
 
-      // console.log("props", props);
-
-      // if(rowNumber > 1) {
-      // process.exit();
-      // }
-
     }
-
-    await pool.end();
-    console.log("...done");
-
   } else {
     console.log("Path to the file with data is incorrect!");
   }
-
+  console.timeEnd(mark);
 }
 
 const initDatabase = async() => {
@@ -172,14 +167,38 @@ const initDatabase = async() => {
 
 // entry point
 (async () => {
-  if (process.argv[2]) {
-    if (process.argv[3] && process.argv[3] === "-init"){
+  const args = process.argv.slice(2);
+
+  if(args.length) {
+    const initIndex = args.indexOf('-init');
+
+    if(initIndex > -1) {
       console.log("...initializing database");
       await initDatabase();
+      args.splice(initIndex, 1);
     }
-    console.log("...processing file:", process.argv[2]);
-    await processFile(process.argv[2]);
+
+    if(args.length) {
+      const pathname = args.shift();
+      const stat = fs.lstatSync(pathname);
+      if(stat.isDirectory()) {
+        console.log("...processing directory:", pathname);
+        for (const file of fs.readdirSync(pathname)) {
+          const csvPath = path.resolve(__dirname, pathname, file);
+          if (fs.lstatSync(csvPath).isFile()){
+              await processFile(csvPath);
+          }
+        }
+      } else if (stat.isFile()) {
+        const csvPath = path.resolve(__dirname, pathname);
+        await processFile(csvPath);
+      } else {
+        console.log("Wrong path! Exiting...");
+      }
+
+    }
   } else {
     console.log("Put path to the file containing data as a command-line argument!");
   }
+  await pool.end();
 })();

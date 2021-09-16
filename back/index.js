@@ -214,10 +214,10 @@ const swaggerOptions = {
 	});
 
 	app.all('/api/features/:corpus*?', async(req, res) => {
-		console.log("corpus", req.params.corpus);
 		const corpus = req.params.corpus || "main";
-		const props = await db.getFeaturesUnique();
-		const dict  = await db.getFeaturesDict();
+		console.log("corpus", corpus);
+		const props = await db.getFeaturesUnique(corpus);
+		const dict  = await db.getFeaturesDict(corpus);
 		const count = await db.getCorpusCount(corpus);
 		const meta = await db.getMetafields('ru');
 		const corpora = [

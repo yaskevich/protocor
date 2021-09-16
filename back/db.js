@@ -123,16 +123,17 @@ export default {
 		const res = await pool.query(query, values);
 		return res.rows;
 	},
-	async getFeaturesUnique() {
-    const query  = "SELECT prop, count(prop)::int FROM texts, unnest(features) AS prop group by prop";
-		const res = await pool.query(query);
+	async getFeaturesUnique(corpus) {
+    const query  = "SELECT prop, count(prop)::int FROM texts, unnest(features) AS prop  where texts.corpus = $1 group by prop";
+		const res = await pool.query(query, [corpus]);
 		return res?.rows;
 	},
-	async getFeaturesDict() {
+	async getFeaturesDict(corpus) {
     // const query  = "select array_agg(distinct u.val) uniquefeatures from texts t cross join lateral unnest(t.features) as u(val)";
     // , 'topic'
-    const query  = "select id, groupid, ru from features where groupid in ('audience_age', 'audience_level', 'audience_size', 'created', 'medium') AND id in (select unnest(array_agg(distinct u.val)) uniquefeatures from texts t cross join lateral unnest(t.features) as u(val))";
-		const res = await pool.query(query);
+    // groupid in ('audience_age', 'audience_level', 'audience_size', 'created', 'medium') AND
+    const query  = "select id, groupid, ru from features where  id in (select unnest(array_agg(distinct u.val)) uniquefeatures from (select * from texts  where corpus = $1) t cross join lateral unnest(t.features) as u(val))";
+		const res = await pool.query(query, [corpus]);
     // return res?.rows[0]?.uniquefeatures;
 		return res?.rows;
 	},

@@ -121,36 +121,44 @@ async function processFile(filePath) {
 
     let rowNumber = 0;
 
-    // for (const row of csvArr) {
-    for (let n = 0; n < csvArr.length; n++) {
-      // rowNumber = `${n + 2}(${n})`;
-      rowNumber = n + 2;
-      const row = csvArr[n];
-      const values = [];
-      let skip = false;
+    try {
+      await pool.query('BEGIN');
+      for (let n = 0; n < csvArr.length; n++) {
+        // rowNumber = `${n + 2}(${n})`;
+        rowNumber = n + 2;
+        const row = csvArr[n];
+        const values = [];
+        let skip = false;
 
-      const props = [];
-      const valuesDict = {};
+        const props = [];
+        const valuesDict = {};
 
-      for (let i = 0; i < row.length; i++) {
-        const data = row[i];
-        const title = fieldRow[i];
+        for (let i = 0; i < row.length; i++) {
+          const data = row[i];
+          const title = fieldRow[i];
 
-        if (columns.includes(title)) {
-          valuesDict[title] = data;
-        } else if (data) {
-          props.push(await updateFeatureId(title, data, rowNumber));
-          // console.log(`${title} [${getRuTitle(title)}] ${data}`);
+          if (columns.includes(title)) {
+            valuesDict[title] = data;
+          } else if (data) {
+            props.push(await updateFeatureId(title, data, rowNumber));
+            // console.log(`${title} [${getRuTitle(title)}] ${data}`);
+          }
         }
-      }
 
-      try {
+        // try {
         await pool.query(textInsert, [corpus].concat(columns.map(x => valuesDict[x])).concat([props]));
-      } catch (err) {
-        console.log(err.stack);
-      }
+        // } catch (err) {
+        //   console.log(err.stack);
+        // }
 
-    }
+      }
+      await pool.query('COMMIT');
+    } catch (e) {
+      await pool.query('ROLLBACK');
+      console.log(e.message);
+    } // finally {
+      // client.release();
+    // }
   } else {
     console.log("Path to the file with data is incorrect!");
   }

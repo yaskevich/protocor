@@ -1,7 +1,6 @@
 import { reactive } from "vue";
 import axios from "axios";
-// import router from "./router";
-
+import project from '../../package.json';
 
 interface MyData {
     user: Object;
@@ -46,7 +45,7 @@ const space000 = (x: String) =>  x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '
 
 const countNoun = (num: number, type?: number) => {
   const index = type || 0;
-  //              документ         слово          вхождение  
+  //              документ         слово          вхождение
   const rules = [['', 'а', 'ов'], ['о', 'а', ''], ['е', 'я', 'й']];
   const last:string = num.toString().slice(-1);
   return last === '1' ? rules[index][0] : ['2', '3', '4'].includes(last) ? rules[index][1] : rules[index][2];
@@ -253,4 +252,5 @@ export default {
   // doLogout,
   // getData
   state: state,
+  version: project.version,
 };

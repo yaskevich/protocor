@@ -1,4 +1,5 @@
 <template>
+
   <div class="about">
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/> -->
@@ -9,18 +10,25 @@
     <p>
       Проводит <a href="https://yaskevich.com/" target="_blank">Алексей Яскевич</a> (Лаб. № 20 ИППИ РАН)
     </p>
+    <div>
+      Версия интерфейса: {{version}}
+    </div>
+
   </div>
+
 </template>
 
+<script>
 
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
+  import { ref, reactive, defineComponent, onBeforeMount } from 'vue';
+  import store from '../store';
 
-@Options({
-  components: {
-    HelloWorld,
-  },
-})
-export default class About extends Vue {}
-</script>
+  export default defineComponent({
+    setup() {
+      return {
+        version: store.version,
+      }
+    },
+    });
+
+  </script>

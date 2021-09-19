@@ -28,6 +28,7 @@ export default defineComponent({
   setup() {
      onBeforeMount(async() => {
        await store.getUser();
+       await store.getConfig();
        dataReady.value = true;
        console.log('app → mounted!')
     })

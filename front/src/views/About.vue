@@ -3,15 +3,16 @@
   <div class="about">
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/> -->
-    <p>Экспериментальные эксперименты с интерфейсом<br/> <a href="https://ruscorpora.ru" target="_blank">Национального корпуса русского языка</a>.</p>
-    <p>
-      Не пытайтесь повторить это дома!
-    </p>
-    <p>
-      Проводит <a href="https://yaskevich.com/" target="_blank">Алексей Яскевич</a> (Лаб. № 20 ИППИ РАН)
-    </p>
+    <p>Экспериментальный прототип интерфейса<br/> <a href="https://ruscorpora.ru" target="_blank">Национального корпуса русского языка</a></p>
+
+    <p><a href="https://yaskevich.com/" target="_blank">Алексей Яскевич</a> / <a href="https://ddrl.iitp.ru/" target="_blank">Лаб. № 20 ИППИ РАН</a></p>
+
+    <div class="p-text-bold p-pb-1">Версии приложений платформы</div>
     <div>
-      Версия интерфейса: {{version}}
+      Пользовательский интерфейс: {{version}}
+    </div>
+    <div>
+      Сервер API: {{api.server}}
     </div>
 
   </div>
@@ -27,6 +28,7 @@
     setup() {
       return {
         version: store.version,
+        api: store.state.config,
       }
     },
     });

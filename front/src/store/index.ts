@@ -7,6 +7,7 @@ interface MyData {
     freqs: any,
     key: string,
     profile: Object,
+    config: Object,
 };
 
 interface ipmStruct {
@@ -21,6 +22,7 @@ interface ipmsStruct {
 const state:MyData = reactive({
   key: localStorage.getItem('key') || '',
   profile: {},
+  config: {},
   user: {
         queries: JSON.parse(localStorage.getItem('queries') || "[]"),
   },
@@ -75,6 +77,16 @@ const getUser = async() => {
         return error;
       }
   }
+};
+
+const getConfig = async() => {
+    try {
+      const response = await axios.get("/api/config");
+      state.config = response.data;
+    } catch (error) {
+      console.log("Cannot get config", error)
+      return error;
+    }
 };
 
 const doLogin = async(payload: Object): Promise<any> => {
@@ -246,6 +258,7 @@ export default {
   countNoun,
   getFormattedTime,
   regUser,
+  getConfig,
   // initUser,
   // getData,
   // deleteById,

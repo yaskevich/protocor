@@ -9,6 +9,7 @@ import bodyParser from 'body-parser';
 import passport from 'passport';
 import passportJWT from "passport-jwt";
 import jwt from 'jsonwebtoken';
+import fs from 'fs';
 
 import swaggerJsDoc from 'swagger-jsdoc';
 import swaggerExpress from 'swagger-ui-express';
@@ -19,6 +20,7 @@ import search from './search.js';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const __package = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
 
 const swaggerOptions = {
 	swaggerDefinition: {
@@ -116,6 +118,11 @@ const swaggerOptions = {
 	app.get('/api/profile', auth, async(req,res) => {
 		res.json(req.user);
 	 });
+
+	app.get('/api/config', (req, res) => {
+		// later localization could be added
+		res.json({ "server": __package.version });
+	});
 
 	app.get('/api/test', (req, res) => {
 		res.json({ "message": "ok" });

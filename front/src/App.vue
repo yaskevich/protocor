@@ -6,7 +6,8 @@
     <router-link to="/corpora">Корпуса</router-link> |
     <router-link to="/about">О проекте</router-link> |
     <span v-if="loggedIn">
-      <router-link to="/profile">Моё</router-link>
+      <router-link to="/profile">Моё</router-link> |
+      <a href ="#" @click="doLogOut">Выйти</a>
     </span>
     <span v-else>
       <router-link to="/login">Войти</router-link>
@@ -56,10 +57,17 @@ export default defineComponent({
      // const loggedIn =() => computed(() => Boolean(store?.state?.key));
      // console.log("key", store?.state?.key);
 
+     const doLogOut = () => {
+       console.log("logout");
+       localStorage.setItem('key', '');
+       store.state.key = '';
+     };
+
     return {
        dataReady,
        state: store.state,
        loggedIn: store?.state?.key,
+       doLogOut,
      };
     },
     // computed: {

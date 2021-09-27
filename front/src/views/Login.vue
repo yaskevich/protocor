@@ -47,22 +47,28 @@
 
 </template>
 
-<script lang="ts">
+<script>
 
-  import { defineComponent, ref, reactive, ComponentPublicInstance } from 'vue';
+  import { defineComponent, ref, reactive, onBeforeMount, } from 'vue';
   import Password from 'primevue/password';
   import store from '../store';
   import router from '../router';
 
   export default defineComponent({
     setup() {
-      // const formRef = ref<ComponentPublicInstance<typeof ElForm>>();
       let user = reactive({ email: '', password: '' });
       const error = ref('');
       const showMessage = ref(false);
       // const resetForm = () => {
       //   formRef.value?.resetFields();
       // };
+
+      onBeforeMount(() => {
+        if (store.state.profile?.id) {
+          router.push('/profile');
+        }
+      });
+
       const confirm = async () => {
         console.log('user/pass', user);
         const error = await store.doLogin(user);

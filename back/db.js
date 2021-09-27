@@ -91,16 +91,19 @@ export default {
   },
   async createUser(data, isActivated = false) {
     console.log("create user", data);
+    isActivated = true; // TESTING mode !!!
+                        // handle e-mail verifying in production
     const usersData = await pool.query(`SELECT * FROM users`);
     if (usersData.rows.length) {
       if (usersData.rows.filter(x => x.email == data.email).length) {
         return { "error": "email not unique" };
       }
     }
-    const pwd = passGen.generate(passOptions);
-    console.log("make hash");
+    // const pwd = passGen.generate(passOptions);
+    const pwd = data.password;
+    // console.log("make hash");
     const hash = await bcrypt.hash(pwd, saltRounds);
-    console.log("ready");
+    // console.log("ready");
     // console.log(pwd, hash);
     const result = await pool.query(`INSERT INTO users (firstname, lastname, email, sex, _passhash, activated) VALUES($1, $2, $3, $4, $5, $6) RETURNING id`, [data.firstname, data.lastname, data.email, data.sex, hash, isActivated]);
     if (result.rows.length === 1) {

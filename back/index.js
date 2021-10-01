@@ -152,7 +152,10 @@ const swaggerOptions = {
  	*/
 	app.get('/api/config', (req, res) => {
 		// later localization could be added
-		res.json({ "server": __package.version });
+		res.json({
+			 "server": __package.version,
+			 "specs": swaggerOptions.swaggerDefinition.info.version, 
+		 });
 	});
 
 	app.get('/api/test', (req, res) => {

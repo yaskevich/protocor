@@ -94,7 +94,30 @@ const swaggerOptions = {
 		const result = await db.createUser(req.body, false);
 		res.json(result);
 	});
-
+	/**
+  * @swagger
+  * /api/login:
+  *  post:
+  *    description: Authenticate a user
+  *    parameters:
+  *      - name: email
+  *        in: query
+  *        description: E-mail of a registered user
+  *        required: true
+  *        schema:
+  *          type: string
+  *          format: string
+  *      - name: password
+  *        in: query
+  *        description: Password of the user
+  *        required: true
+  *        schema:
+  *          type: string
+  *          format: string
+  *    responses:
+  *      '200':
+  *        description: A successful response
+  */
 	app.post('/api/login', async(req, res) => {
 		const userData = await db.getUserData(req.body["email"], req.body["password"]);
 		if (userData && Object.keys(userData).length && !userData.hasOwnProperty("error") ) {
@@ -118,7 +141,15 @@ const swaggerOptions = {
 	app.get('/api/profile', auth, async(req,res) => {
 		res.json(req.user);
 	 });
-
+	/**
+ 	* @swagger
+ 	* /api/config:
+ 	*  get:
+ 	*    description: Return server application configuration info as JSON
+ 	*    responses:
+ 	*      '200':
+ 	*        description: results in JSON format
+ 	*/
 	app.get('/api/config', (req, res) => {
 		// later localization could be added
 		res.json({ "server": __package.version });
@@ -127,7 +158,15 @@ const swaggerOptions = {
 	app.get('/api/test', (req, res) => {
 		res.json({ "message": "ok" });
 	});
-
+	/**
+  * @swagger
+  * /api/grammar:
+  *  get:
+  *    description: Return information on grammar features and categories as hierarchy in JSON
+  *    responses:
+  *      '200':
+  *        description: results in JSON format
+  */
 	app.get('/api/grammar', (req, res) => {
 		// remember: remove X in gender (it was added to avoid duplicates in JSON)
 		res.sendFile(path.join(__dirname, "grammar.json"));

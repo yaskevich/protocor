@@ -22,14 +22,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const __package = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
 
+const title = "Ruscorpora API";
 const swaggerOptions = {
 	swaggerDefinition: {
     info: {
       version: "2.0.0",
-      title: "Ruscorpora API",
-      description: "Ruscorpora API Information",
+      title: title,
+      description: title,
 			"contact": {
-		    "name": "Ruscorpora Development Team",
+		    "name": "Ruscorpora",
 		    "url": "http://dev.ruscorpora.ru/api",
 		    "email": "dev@ruscorpora.ru"
 		  },
@@ -37,6 +38,12 @@ const swaggerOptions = {
     }
   },
   apis: ["index.js"]
+};
+
+const swaggerUIOptions = {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: title,
+  // customfavIcon: "/assets/favicon.ico"
 };
 
 (async () => {
@@ -71,7 +78,7 @@ const swaggerOptions = {
 	const auth = passport.authenticate('jwt', {session: false});
 
 	const swaggerDocs = swaggerJsDoc(swaggerOptions);
-	app.use("/api/docs", swaggerExpress.serve, swaggerExpress.setup(swaggerDocs));
+	app.use("/api/docs", swaggerExpress.serve, swaggerExpress.setup(swaggerDocs, swaggerUIOptions));
 	// app.use(compression());
 	// app.set('trust proxy', 1);
 	app.use(passport.initialize());

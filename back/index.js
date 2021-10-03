@@ -82,9 +82,16 @@ const swaggerOptions = {
 
 	// Routes
 	/**
+	 * @swagger
+	 * tags:
+	 *   name: User
+	 *   description: User login and user data management
+	 */
+	/**
 	* @swagger
 	* /api/reg:
 	*  post:
+	*    tags: [User]
 	*    description: Create a new user
 	*    responses:
 	*      '200':
@@ -95,30 +102,30 @@ const swaggerOptions = {
 		res.json(result);
 	});
 	/**
-  * @swagger
-  * /api/login:
-  *  post:
-  *    description: Authenticate a user
-  *    parameters:
-  *      - name: email
-  *        in: query
-  *        description: E-mail of a registered user
-  *        required: true
-  *        schema:
-  *          type: string
-  *          format: string
-  *      - name: password
-  *        in: query
-  *        description: Password of the user
-  *        required: true
-  *        schema:
-  *          type: string
-  *          format: string
-  *    responses:
-  *      '200':
-  *        description: A successful response
-  */
+   * @swagger
+   * /api/login:
+   *   post:
+   *     description: Login to the application
+   *     tags: [User]
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: email
+   *         description: User's e-mail
+   *         in: formData
+   *         required: true
+   *         type: string
+   *       - name: password
+   *         description: User's password.
+   *         in: formData
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: user info
+   */
 	app.post('/api/login', async(req, res) => {
+		console.log("login data", req.body);
 		const userData = await db.getUserData(req.body["email"], req.body["password"]);
 		if (userData && Object.keys(userData).length && !userData.hasOwnProperty("error") ) {
 			console.log(req.body["email"], "<SUCCESS>");
@@ -146,6 +153,7 @@ const swaggerOptions = {
  	* /api/config:
  	*  get:
  	*    description: Return server application configuration info as JSON
+  *    tags: [Middleware]
  	*    responses:
  	*      '200':
  	*        description: results in JSON format
@@ -154,7 +162,7 @@ const swaggerOptions = {
 		// later localization could be added
 		res.json({
 			 "server": __package.version,
-			 "specs": swaggerOptions.swaggerDefinition.info.version, 
+			 "specs": swaggerOptions.swaggerDefinition.info.version,
 		 });
 	});
 
@@ -165,6 +173,7 @@ const swaggerOptions = {
   * @swagger
   * /api/grammar:
   *  get:
+  *    tags: [Middleware]
   *    description: Return information on grammar features and categories as hierarchy in JSON
   *    responses:
   *      '200':
@@ -180,14 +189,55 @@ const swaggerOptions = {
 		const route = routes.includes(req.params.route) ? req.params.route : "";
 		res.json(await db.getUserlogs(req.user.id, route));
 	});
-
+/**
+ * @swagger
+ * /api/text:
+ *   post:
+ *     description: Returns text info by text ID and corpus. It was discussed with search engine developers that in the future corpus name won't be required. Anyway, if omitted, “main” is used as a default one.
+ *     tags: [Search]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: text ID
+ *         in: formData
+ *         required: true
+ *         type: string
+ *         example: bWFpbi9zdGFuZGFyZC9wb3N0MTk1MC9uYXVrYS9zdGF0aXN0aWNhLzUxODI5MC54bWw=
+ *       - name: corpus
+ *         description: corpus name
+ *         in: formData
+ *         type: string
+ *         example: main
+ *     responses:
+ *       200:
+ *         description: results in JSON format
+ */
 	app.post('/api/text', async(req, res) => {
 		const cacheKey = req.body.id;
 		const datum = await search.getFromCache(req.body.id, cacheKey);
 		console.log(datum ? '■': '□', req.method, req.url, req.body);
-		res.json(datum || await search.getTextMeta (req.body.id, req.body.corpus));
+		res.json(datum || await search.getTextMeta (req.body.id, req.body.corpus || 'main'));
 	});
-
+ /**
+  * @swagger
+  * /api/token:
+  *   post:
+	*     description: Returns token info by token ID
+  *     tags: [Search]
+  *     produces:
+  *       - application/json
+  *     parameters:
+  *       - name: id
+  *         description: token ID
+  *         in: formData
+  *         required: true
+  *         type: string
+  *         example: bWFpbi9zdGFuZGFyZC9wb3N0MTk1MC9mb3J1bS9lbGVjdHJvY29tL3NsdXpoZWJueWpfcm9tYW5fZGlzYW1iLnhtbAkzNDQJNA==
+  *     responses:
+  *       200:
+  *         description: results in JSON format
+  */
 	app.post('/api/token', async(req, res) => {
 		const cacheKey = req.body.id;
 		console.log("get token", cacheKey);
@@ -195,9 +245,32 @@ const swaggerOptions = {
 		console.log(datum ? '■': '□', req.method, req.url, req.body);
 		res.json(datum || await search.getTokenMeta (cacheKey));
 	});
-
+/**
+ * @swagger
+ * /api/freq:
+ *   post:
+ *     description: Returns token frequency historical data. If corpus name is omitted, “main” used as a default one.
+ *     tags: [Search]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: token
+ *         description: token
+ *         in: formData
+ *         required: true
+ *         type: string
+ *         example: кот
+ *       - name: corpus
+ *         description: corpus name
+ *         in: formData
+ *         type: string
+ *         example: main
+ *     responses:
+ *       200:
+ *         description: results in JSON format
+ */
 	app.post('/api/freq', async(req, res) => {
-		const cacheKey = serializeQuery(req.url, { [req.body.token]: req.body.corpus || 'main'  });
+		const cacheKey = serializeQuery(req.url, { [req.body.token]: req.body.corpus || 'main' });
 		const datum = await search.getFromCache(req.body.token, cacheKey);
 		console.log(datum ? '■': '□', req.method, req.url, req.body);
 		res.json(datum || await search.getFreq(cacheKey, req.body.token, req.body.corpus));

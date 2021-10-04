@@ -34,7 +34,7 @@ const swaggerOptions = {
 		    "url": "http://dev.ruscorpora.ru/api",
 		    "email": "dev@ruscorpora.ru"
 		  },
-      servers: ["http://localhost:3061"]
+			servers: ["http://localhost:3061"],
     }
   },
   apis: ["index.js"]
@@ -282,59 +282,74 @@ const swaggerUIOptions = {
 		console.log(datum ? '■': '□', req.method, req.url, req.body);
 		res.json(datum || await search.getFreq(cacheKey, req.body.token, req.body.corpus));
 	});
-	/**
-	 * @swagger
-	 * /api/query:
-	 *    post:
-	 *      description: Search in corpus
-	 *    parameters:
-	 *      - name: corpus
-	 *        in: query
-	 *        description: Subcorpus ID where to search
-	 *        required: false
-	 *        schema:
-	 *          type: string
-	 *          format: string
-	 *      - name: token
-	 *        in: query
-	 *        description: token to search
-	 *        required: true
-	 *        schema:
-	 *          type: string
-	 *          format: string
-	 *      - name: dpp
-	 *        in: query
-	 *        description: number of documents to return
-	 *        required: false
-	 *        schema:
-	 *          type: integer
-	 *          format: int32
-	 *      - name: spd
-	 *        in: query
-	 *        description: number of snippets per document
-	 *        required: false
-	 *        schema:
-	 *          type: integer
-	 *          format: int32
-	 *    responses:
-	 *      '200':
-	 *        description: search results in JSON format
-	 */
+ /**
+  * @swagger
+  * /api/query:
+  *   post:
+  *     description: Return token search results
+  *     tags: [Search]
+  *     produces:
+  *       - application/json
+  *     parameters:
+  *       - name: token
+  *         description: token
+  *         in: formData
+  *         required: true
+  *         example: заяц
+  *         type: string
+  *       - name: corpus
+  *         description: corpus name
+  *         in: formData
+  *         type: string
+  *         example: spoken
+  *         default: main
+	*       - name: dpp
+  *         in: formData
+	*         description: number of documents to return
+	*         type: integer
+  *         example: 20
+  *         default: 1
+	*       - name: spd
+  *         in: formData
+	*         description: number of snippets per document
+	*         type: integer
+  *         example: 3
+  *         default: 1
+  *     responses:
+  *       200:
+  *         description: results in JSON format
+  */
 	app.post('/api/query', async(req, res) => {
-		const cacheKey = serializeQuery(req.url, req.body);
-		const datum = await search.getFromCache(req.body.token, cacheKey);
-		console.log(datum ? '■': '□', req.method, req.url, req.body);
-		res.json(datum || await search.getSearch(cacheKey, req.body.token, req.body.corpus, req.body.dpp, req.body.spd, req.body.full));
+		const params = {
+			"token": req.body.token,
+			"corpus": req.body.corpus || "main",
+			"dpp": req.body.dpp || 50,
+			"spd": req.body.spd || 1,
+			"full": req.body.full || '',
+		};
+		const route = req.url.substring(req.url.lastIndexOf('/') + 1);
+		const cacheKey = serializeQuery(route, params);
+		const datum = await search.getFromCache(params.token, cacheKey);
+		console.log(datum ? '■': '□', req.method, req.url, params);
+		res.json(datum || await search.getSearch(cacheKey, params.token, params.corpus, params.dpp, params.spd, params.full));
 	});
 
 	app.post('/api/auth/query', auth, async(req, res) => {
-		const cacheKey = serializeQuery(req.url, req.body);
+		const params = {
+			"token": req.body.token,
+			"corpus": req.body.corpus || "main",
+			"dpp": req.body.dpp || 50,
+			"spd": req.body.spd || 1,
+			"full": req.body.full || '',
+		};
+		const route = req.url.substring(req.url.lastIndexOf('/') + 1);
+		const cacheKey = serializeQuery(route, params);
 		// console.log("search", req.user.id, req.body);
-		const result = db.saveQuery(req.user.id, 'query', req.body.corpus|| 'main', req.body);
+		const result = db.saveQuery(req.user.id, 'query', params.corpus, params);
 		console.log("query saved");
-		const datum = await search.getFromCache(req.body.token, cacheKey);
-		console.log(datum ? '■': '□', req.method, req.url, req.body);
-		res.json(datum || await search.getSearch(cacheKey, req.body.token, req.body.corpus, req.body.dpp, req.body.spd, req.body.full));
+		const datum = await search.getFromCache(params.token, cacheKey);
+		console.log(datum ? '■': '□', req.method, req.url, params);
+		res.json(datum || await search.getSearch(cacheKey, params.token, params.corpus, params.dpp, params.spd, params.full));
 	});
 
 	app.post('/api/auth/log', auth, async(req, res) => {

@@ -41,9 +41,12 @@ const swaggerOptions = {
 };
 
 const swaggerUIOptions = {
-  customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: title,
-  // customfavIcon: "/assets/favicon.ico"
+	customCss: '.swagger-ui .topbar { display: none } .scheme-container { display: none }',
+	customSiteTitle: title,
+	// customfavIcon: "/assets/favicon.ico"
+	swaggerOptions: {
+ 		tryItOutEnabled: true
+	}
 };
 
 (async () => {

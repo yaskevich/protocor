@@ -98,15 +98,48 @@ const swaggerUIOptions = {
 	 *   description: User login and user data management
 	 */
 	/**
-	* @swagger
-	* /api/reg:
-	*  post:
-	*    tags: [User]
-	*    description: Create a new user
-	*    responses:
-	*      '200':
-	*        description: A successful response
-	*/
+
+ /**
+ * @swagger
+ * /api/reg:
+ *   post:
+ *     description: Create a new user
+ *     tags: [User]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: email
+ *         description: E-mail of a new user
+ *         in: formData
+ *         required: true
+ *         type: string
+ *         example: russian@yandex.ru
+ *       - name: password
+ *         description: Password for the user
+ *         in: formData
+ *         type: string
+ *         example: verystrongpassword123456
+ *       - name: firstname
+ *         description: User's first name
+ *         in: formData
+ *         type: string
+ *         example: Екатерина
+ *       - name: lastname
+ *         description: User's last name
+ *         in: formData
+ *         type: string
+ *         example: Рахилина
+ *       - name: sex
+ *         description: User's grammatical gender (1 - female, 2 - male)
+ *         in: formData
+ *         type: integer
+ *         minimum: 1
+ *         maximum: 2
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: results in JSON format (key is 'message', value is user password)
+ */
 	app.post('/api/reg', async(req,res) => {
 		const result = await db.createUser(req.body, false);
 		res.json(result);
@@ -154,7 +187,22 @@ const swaggerUIOptions = {
 		// When you check token validity, also check "issue time" be after "last logout time".
 		// res.redirect('/login');
 	});
-
+	/**
+  * @swagger
+  * /api/profile:
+  *  get:
+  *    tags: [User]
+  *    description: Return user profile of logged-in user
+	*    parameters:
+  *      - in: header
+  *        name: Authorization
+  *        default: Bearer
+  *        schema:
+  *          type: string
+  *    responses:
+  *      '200':
+  *        description: results in JSON format
+  */
 	app.get('/api/profile', auth, async(req,res) => {
 		res.json(req.user);
 	 });
@@ -175,7 +223,16 @@ const swaggerUIOptions = {
 			 "specs": swaggerOptions.swaggerDefinition.info.version,
 		 });
 	});
-
+	/**
+  * @swagger
+  * /api/test:
+  *  get:
+  *    tags: [Middleware]
+  *    description: Just return OK to be sure that API is working
+  *    responses:
+  *      '200':
+  *        description: results in JSON format
+  */
 	app.get('/api/test', (req, res) => {
 		res.json({ "message": "ok" });
 	});
@@ -354,7 +411,8 @@ const swaggerUIOptions = {
 		console.log(datum ? '■': '□', req.method, req.url, params);
 		res.json(datum || await search.getSearch(cacheKey, params.token, params.corpus, params.dpp, params.spd, params.full));
 	});
-
+// temporary solution (because of current client architecture)
+// logging should be implemented just in a query, not separately!
 	app.post('/api/auth/log', auth, async(req, res) => {
 		const result = db.saveQuery(req.user.id, 'trend', req.body.corpus|| 'main', req.body);
 		res.json({"result": "ok"});

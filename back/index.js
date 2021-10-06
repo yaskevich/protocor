@@ -251,9 +251,9 @@ const swaggerUIOptions = {
 		res.sendFile(path.join(__dirname, "grammar.json"));
 	});
 
-	app.get('/api/userlogs/:route*?', auth, async(req, res) => {
+	app.get('/api/userlogs', auth, async(req, res) => {
 		const routes = ["query", "trend"];
-		const route = routes.includes(req.params.route) ? req.params.route : "";
+		const route = routes.includes(req.query.id) ? req.query.id : "";
 		res.json(await db.getUserlogs(req.user.id, route));
 	});
 /**
@@ -418,9 +418,9 @@ const swaggerUIOptions = {
 		res.json({"result": "ok"});
 	});
 
-	app.all('/api/features/:corpus*?', async(req, res) => {
-		const corpus = req.params.corpus || "main";
-		console.log("corpus", corpus);
+	app.get('/api/features', async(req, res) => {
+		const corpus = req.query.id || "main";
+		// console.log("corpus", corpus);
 		const props = await db.getFeaturesUnique(corpus);
 		const dict  = await db.getFeaturesDict(corpus);
 		const count = await db.getCorpusCount(corpus);

@@ -22,7 +22,7 @@
       onBeforeMount(async () => {
 
         if (store.state.profile?.id) {
-          history.value = await store.getData('userlogs/');
+          history.value = await store.getData('userlogs');
           console.log("hist", history.value);
         } else {
           router.push('/login');

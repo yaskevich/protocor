@@ -46,7 +46,7 @@
 
 
       const loadCorpusMeta = async(corpus) => {
-        const data = await store.getData('features/'+corpus);
+        const data = await store.getData('features', corpus);
         // console.log("data", data.value);
         counts.value = new Map(data.props.map(i => [i.prop, i.count]));
         dict.value = groupByBrand(data.dict);

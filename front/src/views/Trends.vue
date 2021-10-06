@@ -34,7 +34,7 @@
 
       onBeforeMount(async () => {
         if (store.state.profile?.id) {
-          const result = await store.getData('userlogs/trend');
+          const result = await store.getData('userlogs', 'trend');
 
           if (result.length) {
             store.state.trends = result[0].query.tokens;

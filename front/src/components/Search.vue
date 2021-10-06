@@ -245,7 +245,7 @@
       onBeforeMount(async () => {
         const grammar = await store.getData('grammar');
         if (store.state.profile?.id) {
-          history.value = await store.getData('userlogs/query');
+          history.value = await store.getData('userlogs', 'query');
           user.queries = [...new Set(history.value.map(x=> x.query.token))];
         }
         // console.log("grammar", grammar);
@@ -255,7 +255,7 @@
         }));
         // console.log("Grammar items", items);
 
-        const data = await store.getData('features/spoken');
+        const data = await store.getData('features', 'spoken');
         Object.assign(corpora, {} , data.corpora );
 
       });

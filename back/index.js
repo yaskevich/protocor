@@ -91,11 +91,25 @@ const swaggerUIOptions = {
 	app.use(express.static('public'));
 
 	// Routes
+
+	/**
+	 * @swagger
+	 * tags:
+	 *   name: Metadata
+	 *   description: Retrieval of info related to server environment and metadata of corpora
+	 */
+	/**
 	/**
 	 * @swagger
 	 * tags:
 	 *   name: User
 	 *   description: User login and user data management
+	 */
+	/**
+	 * @swagger
+	 * tags:
+	 *   name: Search
+	 *   description: Accessing corpus search engine
 	 */
 	/**
 
@@ -211,7 +225,7 @@ const swaggerUIOptions = {
  	* /api/config:
  	*  get:
  	*    description: Return server application configuration info as JSON
-  *    tags: [Middleware]
+  *    tags: [Metadata]
  	*    responses:
  	*      '200':
  	*        description: results in JSON format
@@ -227,7 +241,7 @@ const swaggerUIOptions = {
   * @swagger
   * /api/test:
   *  get:
-  *    tags: [Middleware]
+  *    tags: [Metadata]
   *    description: Just return OK to be sure that API is working
   *    responses:
   *      '200':
@@ -240,7 +254,7 @@ const swaggerUIOptions = {
   * @swagger
   * /api/grammar:
   *  get:
-  *    tags: [Middleware]
+  *    tags: [Metadata]
   *    description: Return information on grammar features and categories as hierarchy in JSON
   *    responses:
   *      '200':
@@ -250,7 +264,29 @@ const swaggerUIOptions = {
 		// remember: remove X in gender (it was added to avoid duplicates in JSON)
 		res.sendFile(path.join(__dirname, "grammar.json"));
 	});
-
+	/**
+  * @swagger
+  * /api/userlogs:
+  *  get:
+  *    tags: [User]
+  *    description: Return history of user actions on specific UI
+	*    parameters:
+	*      - in: header
+	*        name: Authorization
+	*        default: Bearer
+	*        schema:
+	*          type: string
+  *      - in: query
+  *        name: id
+  *        description: UI part
+  *        default: query
+  *        example: trend
+  *        schema:
+  *          type: string
+  *    responses:
+  *      '200':
+  *        description: results in JSON format
+  */
 	app.get('/api/userlogs', auth, async(req, res) => {
 		const routes = ["query", "trend"];
 		const route = routes.includes(req.query.id) ? req.query.id : "";
@@ -417,7 +453,24 @@ const swaggerUIOptions = {
 		const result = db.saveQuery(req.user.id, 'trend', req.body.corpus|| 'main', req.body);
 		res.json({"result": "ok"});
 	});
-
+	/**
+  * @swagger
+  * /api/features:
+  *  get:
+  *    tags: [Metadata]
+  *    description: Return info about the metadata features in specfic corpus
+	*    parameters:
+  *      - in: query
+  *        name: id
+  *        description: name of the corpus
+  *        default: dialect
+  *        example: spoken
+  *        schema:
+  *          type: string
+  *    responses:
+  *      '200':
+  *        description: results in JSON format
+  */
 	app.get('/api/features', async(req, res) => {
 		const corpus = req.query.id || "main";
 		// console.log("corpus", corpus);

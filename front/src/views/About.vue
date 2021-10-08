@@ -7,12 +7,15 @@
 
     <p><a href="https://yaskevich.com/" target="_blank">Алексей Яскевич</a> / <a href="https://ddrl.iitp.ru/" target="_blank">Лаб. № 20 ИППИ РАН</a></p>
 
-    <div class="p-text-bold p-pb-1">Версии приложений платформы</div>
+    <div class="p-text-bold p-pb-1">Версии компонентов платформы</div>
     <div>
       Пользовательский интерфейс: {{version}}
     </div>
     <div>
-      Сервер API: {{api.server}}
+      Серверное приложение: {{api.server}}
+    </div>
+    <div>
+      Версия API: {{api.specs}}
     </div>
 
   </div>

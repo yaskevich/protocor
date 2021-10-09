@@ -15,6 +15,10 @@ interface ipmStruct {
   ipm: number,
 };
 
+interface keyable {
+    [key: string]: any
+};
+
 interface ipmsStruct {
   [index: string]: ipmStruct
 };
@@ -92,7 +96,7 @@ const getConfig = async() => {
 const doLogin = async(payload: Object): Promise<any> => {
   // if (!state.key) {
     try {
-     const response = await axios.post("/api/login", payload);
+     const response: any = await axios.post("/api/login", payload);
      if ("data" in response && "id" in response.data){
        state.profile = response.data;
        state.key  = response.data.token || '';

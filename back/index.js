@@ -10,12 +10,10 @@ import passport from 'passport';
 import passportJWT from "passport-jwt";
 import jwt from 'jsonwebtoken';
 import fs from 'fs';
-
 import swaggerJsDoc from 'swagger-jsdoc';
 import swaggerExpress from 'swagger-ui-express';
 
 import db from './db.js';
-
 import search from './search.js';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
@@ -53,8 +51,6 @@ const swaggerUIOptions = {
 
 	const app = express();
 	const port = process.env.PORT || 3061;
-	const JWTStrategy   = passportJWT.Strategy;
-	const ExtractJWT = passportJWT.ExtractJwt;
 	// console.log("cache keys:", search.cache.keysSync());
 
 	const serializeQuery = (method, query) => method.replace(/\//g, '') + Object.entries(query).map( x => x.join('') ).join('');
@@ -68,8 +64,8 @@ const swaggerUIOptions = {
 	  }, process.env.JWT_SECRET);
 	};
 
-	const strategy  = new JWTStrategy({
-		  jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+	const strategy  = new passportJWT.Strategy({
+		  jwtFromRequest: passportJWT.ExtractJwt.fromAuthHeaderAsBearerToken(),
 		  secretOrKey   : process.env.JWT_SECRET
 		}, function (jwtPayload, done) {
 		  return db.getUserDataByID(jwtPayload.sub)
@@ -78,14 +74,11 @@ const swaggerUIOptions = {
 		});
 
 	passport.use(strategy);
-	const auth = passport.authenticate('jwt', {session: false});
-
-	const swaggerDocs = swaggerJsDoc(swaggerOptions);
-	app.use("/api/docs", swaggerExpress.serve, swaggerExpress.setup(swaggerDocs, swaggerUIOptions));
-	// app.use(compression());
-	// app.set('trust proxy', 1);
 	app.use(passport.initialize());
-	app.use(passport.session());
+	const auth = passport.authenticate('jwt', {session: false});
+	app.use("/api/docs", swaggerExpress.serve, swaggerExpress.setup(swaggerJsDoc(swaggerOptions), swaggerUIOptions));
+	app.use(compression());
+	app.set('trust proxy', 1);
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(express.static('public'));

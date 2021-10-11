@@ -20,7 +20,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const __package = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
-
+const indexHTML = path.join(__dirname, 'public', 'index.html');
 const title = "Ruscorpora API";
 const swaggerOptions = {
 	swaggerDefinition: {
@@ -87,9 +87,7 @@ const swaggerUIOptions = {
 	if(process.env.NODE_ENV === "production") {
 		app.use(history({
 				// verbose: true,
-				rewrites: [
-				{ from: /\/api\/.*$/, to: context => context.parsedUrl.pathname }
-				]
+				index: "/",
 			}));
 	}
 
@@ -101,20 +99,24 @@ const swaggerUIOptions = {
 	 *   name: Metadata
 	 *   description: Retrieval of info related to server environment and metadata of corpora
 	 */
-	/**
+
 	/**
 	 * @swagger
 	 * tags:
 	 *   name: User
 	 *   description: User login and user data management
 	 */
+
 	/**
 	 * @swagger
 	 * tags:
 	 *   name: Search
 	 *   description: Accessing corpus search engine
 	 */
-	/**
+
+ // serve root page when subpage is opened directly in browser
+ // Vue URL → root → Vue index.html
+ app.get('/', (req, res) => { res.sendFile(indexHTML); });
 
  /**
  * @swagger

@@ -5,6 +5,7 @@ dotenv.config();
 import path from 'path';
 import express from 'express';
 import compression from 'compression';
+import history from 'connect-history-api-fallback';
 import bodyParser from 'body-parser';
 import passport from 'passport';
 import passportJWT from "passport-jwt";
@@ -82,6 +83,15 @@ const swaggerUIOptions = {
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(express.static('public'));
+
+	if(process.env.NODE_ENV === "production") {
+		app.use(history({
+				// verbose: true,
+				rewrites: [
+				{ from: /\/api\/.*$/, to: context => context.parsedUrl.pathname }
+				]
+			}));
+	}
 
 	// Routes
 

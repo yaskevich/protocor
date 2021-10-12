@@ -28,7 +28,7 @@
     <!-- <Button label="Искать" @click="onSubmit($event)" :disabled="!params.token ? 'disabled': null"/> -->
   </div>
   <div class="p-d-flex p-jc-center p-mb-4">
-    <Dropdown v-model="selectedCorpus" :options="corpora" optionValue="id" optionLabel="name" :filter="true" placeholder="Выберите корпус" class="p-mr-2" />
+    <Dropdown v-model="params.corpus" :options="corpora" optionValue="id" optionLabel="name" :filter="true" placeholder="Выберите корпус" class="p-mr-2" />
     <SplitButton label="Искать" @click="onSubmit" :model="buttonItems" :disabled="!params.token ? 'disabled': null"></SplitButton>
     <!-- <Button icon="pi pi-chart-line"
                   @click="renderChart"
@@ -37,7 +37,7 @@
   </div>
 
   <div class="chart-holder">
-    <Chart :tokens="chartTokens" v-if="chartTokens.length" />
+    <Chart :tokens="chartTokens" :corpus="params.corpus" v-if="chartTokens.length" />
   </div>
 
   <div v-if="resp.hasOwnProperty('corp_stat')" class="p-mt-6">
@@ -270,7 +270,7 @@
             const config = {
               headers: { Authorization: 'Bearer ' + store.state.key },
             };
-
+            console.log("params", params);
             const response = store.state.key
               ? await axios.post('/api/auth/query', { ...params, full: isFull ? 1 : '' }, config)
               : await axios.post('/api/query', { ...params, full: isFull ? 1 : '' });
@@ -373,11 +373,10 @@
         }
         return '';
       };
-      const selectedCorpus = ref('main');
+
 
 
       return {
-        selectedCorpus,
         corpora,
         onSubmit,
         resp,

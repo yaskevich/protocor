@@ -10,6 +10,11 @@ interface MyData {
     config: Object,
 };
 
+interface freqData {
+    corpus: string;
+    token: string,
+};
+
 interface ipmStruct {
   year: number,
   ipm: number,
@@ -33,6 +38,7 @@ const state:MyData = reactive({
   freqs: {},
   search: {
     // token: localStorage.getItem('token') || '',
+    corpus: 'main',
     token: '',
     spd: Number(localStorage.getItem('spd')) || 10,
     dpp: Number(localStorage.getItem('dpp')) || 10,
@@ -165,7 +171,7 @@ const postData = async(table: string, data: Object): Promise<any> => {
 const getKeyValue = <T extends object, U extends keyof T>(key: U) => (obj: T) =>
   obj[key];
 
-const getFreq =  async(token: string): Promise<any> => {
+const getFreq =  async(token: string, corpus: string): Promise<any> => {
   if (token) {
     if (token in state.freqs){
       console.log("■ freq", token);
@@ -175,7 +181,11 @@ const getFreq =  async(token: string): Promise<any> => {
         // const config = {
           // headers: { Authorization: "Bearer " + state.token },
         // };
-        const response:Object = await axios.post('/api/freq', { token: token }); // config);
+        const params:freqData = { token: token, corpus: 'main' };
+        if (corpus){
+          params["corpus"] =  corpus;
+        }
+        const response:Object = await axios.post('/api/freq', params); // config);
         // resp.value = response.data;
         // console.log('freq', response.data);
         const data:Object  = response['data' as keyof typeof response];

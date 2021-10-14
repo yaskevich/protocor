@@ -16,7 +16,7 @@
 
   export default {
     name: 'Chart',
-    props: ['tokens'],
+    props: ['tokens', 'corpus'],
     setup(props) {
       console.log('chart setup');
       // create ref to pass to D3 for DOM manipulation
@@ -80,9 +80,9 @@
         console.log('tokens', props.tokens, typeof props.tokens);
 
         tkn = typeof props.tokens == 'Object' ? props.tokens[0] : props.tokens;
-        await store.getFreq(tkn);
-        const freqs = store.state.freqs[tkn];
-        // console.log(tkn, freqs.ipms);
+        await store.getFreq(tkn, props.corpus);
+        const freqs = store.state.freqs[tkn+props.corpus];
+        console.log(tkn, props.corpus, freqs);
 
         xScale.domain([0, freqs.ipms.length]).range([0, width]).nice();
         yScale.domain([0, freqs.ipmMax]).range([height, 0]).nice();
@@ -160,7 +160,7 @@
         });
 
         watch(
-          () => props.tokens,
+          () => [props.tokens, props.corpus],
           (newVal, preVal) => {
             if (props.tokens?.length) {
               console.log('data updated', 'new:', newVal, 'pre', preVal);

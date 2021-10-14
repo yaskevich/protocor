@@ -28,7 +28,7 @@
     <!-- <Button label="Искать" @click="onSubmit($event)" :disabled="!params.token ? 'disabled': null"/> -->
   </div>
   <div class="p-d-flex p-jc-center p-mb-4">
-    <Dropdown v-model="params.corpus" :options="corpora" optionValue="id" optionLabel="name" :filter="true" placeholder="Выберите корпус" class="p-mr-2" />
+    <Dropdown v-model="params.corpus" :options="corpora" optionValue="id" optionLabel="name" :filter="true" placeholder="Выберите корпус" class="p-mr-2" @change="onSubmit"/>
     <SplitButton label="Искать" @click="onSubmit" :model="buttonItems" :disabled="!params.token ? 'disabled': null"></SplitButton>
     <!-- <Button icon="pi pi-chart-line"
                   @click="renderChart"

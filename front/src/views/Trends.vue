@@ -10,11 +10,13 @@
       <InputText type="text" v-model="token" @keyup.enter="addToken" />
       <Button icon='pi pi-plus' @click="addToken" class="p-button-secondary" />
     </div>
-
+    <div style="font-size:.75rem">
+      Данные берутся из основного корпуса
+    </div>
   </div>
 
   <div class="chart-holder">
-    <Chart :tokens="value" v-for="value in store.state.trends" :key="value" class="p-mb-6" />
+    <Chart :tokens="value" :corpus="'main'" v-for="value in store.state.trends" :key="value" class="p-mb-6" />
   </div>
 
 </template>

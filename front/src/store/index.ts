@@ -171,20 +171,18 @@ const postData = async(table: string, data: Object): Promise<any> => {
 const getKeyValue = <T extends object, U extends keyof T>(key: U) => (obj: T) =>
   obj[key];
 
-const getFreq =  async(token: string, corpus: string): Promise<any> => {
+const getFreq =  async(token: string, corpus: string = 'main'): Promise<any> => {
+  const key:string  = token + corpus;
   if (token) {
-    if (token in state.freqs){
+    if (key in state.freqs){
       console.log("■ freq", token);
-      return state.freqs[token as keyof typeof state.freqs];
+      return state.freqs[key as keyof typeof state.freqs];
     } else {
       try {
         // const config = {
           // headers: { Authorization: "Bearer " + state.token },
         // };
-        const params:freqData = { token: token, corpus: 'main' };
-        if (corpus){
-          params["corpus"] =  corpus;
-        }
+        const params:freqData = { token: token, corpus: corpus };
         const response:Object = await axios.post('/api/freq', params); // config);
         // resp.value = response.data;
         // console.log('freq', response.data);
@@ -204,7 +202,7 @@ const getFreq =  async(token: string, corpus: string): Promise<any> => {
           }
         });
 
-        state.freqs[token] = {
+        state.freqs[key] = {
           "yearLast": yearLast,
           "yearFirst": yearFirst,
           "ipmMax": ipmMax,

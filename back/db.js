@@ -116,13 +116,15 @@ export default {
     return result;
   },
 	async getUserlogs(id, route) {
-    let query  = "SELECT corpus, query, id from userlogs WHERE user_id = $1";
+    let query  = "select distinct on (query->>'token') route,id, corpus, query from userlogs WHERE user_id = $1";
     const values  = [id];
     if (route) {
       values.push(route);
       query += " AND route =  $2";
     }
-		query += " ORDER by id DESC LIMIT 20";
+    // this is PostgreSQL: two selects are necessary
+    // https://stackoverflow.com/questions/9795660/postgresql-distinct-on-with-different-order-by
+		query = "SELECT * FROM (" + query + ") as UNIQTOKENS ORDER by id DESC LIMIT 10";
 		const res = await pool.query(query, values);
 		return res.rows;
 	},

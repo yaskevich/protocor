@@ -484,14 +484,14 @@ const swaggerUIOptions = {
 		const count = await db.getCorpusCount(corpus);
 		const meta = await db.getMetafields('ru');
 		const corpora = [
-			{ name: 'основной', id: 'main' },
-			{ name: 'газетный', id: 'paper' },
+			{ name: 'основной', id: 'main', freq: true },
+			{ name: 'газетный', id: 'paper', freq: true },
 			{ name: 'параллельный', id: 'para' },
 			{ name: 'обучающий', id: 'school' },
 			{ name: 'диалектный', id: 'dialect' },
-			{ name: 'поэтический', id: 'poetic' },
+			{ name: 'поэтический', id: 'poetic', freq: true },
 			{ name: 'устный', id: 'spoken' },
-			{ name: 'акцентологический', id: 'accent' },
+			{ name: 'акцентологический', id: 'accent', freq: true },
 			{ name: 'мультимедийный', id: 'murco' },
 			{ name: 'мультипарк', id: 'multiparc' },
 			{ name: 'древнерусский', id: 'oldrus' },

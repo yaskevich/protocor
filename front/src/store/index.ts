@@ -8,6 +8,7 @@ interface MyData {
     key: string,
     profile: Object,
     config: Object,
+    corpora: Array<Object>,
 };
 
 interface freqData {
@@ -35,6 +36,7 @@ const state:MyData = reactive({
   user: {
         queries: JSON.parse(localStorage.getItem('queries') || "[]"),
   },
+  corpora: [],
   freqs: {},
   search: {
     // token: localStorage.getItem('token') || '',
@@ -60,6 +62,9 @@ const countNoun = (num: number, type?: number) => {
   //              документ         слово          вхождение
   const rules = [['', 'а', 'ов'], ['о', 'а', ''], ['е', 'я', 'й']];
   const last:string = num.toString().slice(-1);
+  if (num > 9 && num < 20) {
+    return rules[index][2];
+  }
   return last === '1' ? rules[index][0] : ['2', '3', '4'].includes(last) ? rules[index][1] : rules[index][2];
 };
 

@@ -1,7 +1,7 @@
 <template>
 
   <div ref="resizeRef">
-    <svg ref="svgRef" @click="chartClicked"></svg>
+    <svg ref="svgRef" @click="chartClicked" :class="viz"></svg>
   </div>
 
 </template>
@@ -21,6 +21,7 @@
       console.log('chart setup');
       // create ref to pass to D3 for DOM manipulation
       const svgRef = ref(null);
+      const viz = ref('');
       // create another ref to observe resizing, since observing SVGs doesn't work!
       const { resizeRef, resizeState } = useResizeObserver();
       let svgInitiated = false;
@@ -52,6 +53,16 @@
       const yAxis = d3.axisLeft(yScale);
 
       const updateChart = async () => {
+        const hasFreq = store.state.corpora.filter(x => x.id === props.corpus)?.[0]?.["freq"];
+        if(hasFreq){
+            console.log("update chart", props.corpus);
+            viz.value = '';
+        } else {
+          viz.value = 'p-d-none';
+          console.log("no freq for corpus", props.corpus);
+          return;
+        }
+
         if (!svgInitiated) {
           svgInitiated = true;
           svg = d3.select(svgRef.value);
@@ -240,7 +251,7 @@
       const chartClicked = async () => {
         await renderImage(svgRef.value);
       };
-      return { svgRef, resizeRef, chartClicked };
+      return { svgRef, resizeRef, chartClicked, viz, };
     },
   };
 

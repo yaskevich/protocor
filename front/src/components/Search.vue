@@ -43,7 +43,7 @@
   <div v-if="resp.hasOwnProperty('corp_stat')" class="p-mt-6">
     <div class="">Корпус: {{store.space000(resp.corp_stat.stats[1].num)}} слов{{countNoun(resp.corp_stat.stats[1].num, 1)}}, {{store.space000(resp.corp_stat.stats[0].num)}} документ{{countNoun(resp.corp_stat.stats[0].num)}}</div>
     <div>«<span class="p-text-bold">{{user.queries[0]}}</span>»: {{store.space000(resp.found_stat.stats[1].num)}} вхождени{{countNoun(resp.found_stat.stats[1].num, 2)}}, {{store.space000(resp.found_stat.stats[0].num)}}
-      документов
+      документ{{countNoun(resp.found_stat.stats[0].num)}}
     </div>
     <Divider />
     <div v-for="(value, key) in resp.documents" class="p-mt-1 doc p-p-2 p-shadow-3" :key="key">
@@ -169,7 +169,7 @@
       // const vuerouter = useRoute();
       // const id = vuerouter.params.id;
       const likeContexts = reactive([]);
-      const corpora =  reactive([]);
+      const corpora =  store.state.corpora;
       const textInfo = ref({});
       const tokenInfo = ref({});
       const resp = ref({});

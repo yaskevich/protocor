@@ -116,15 +116,15 @@ export default {
     return result;
   },
 	async getUserlogs(id, route) {
-    let query  = "select distinct on (query->>'token') route,id, corpus, query from userlogs WHERE user_id = $1";
+    // get recent queries it does not matter on which corpus sorted by access time
+    // "select distinct on (query->>'token') route,id, corpus, query from userlogs ...";
+    let query  = "SELECT query->>'token' AS tk, MAX(id) as id FROM userlogs WHERE user_id = $1";
     const values  = [id];
     if (route) {
       values.push(route);
       query += " AND route =  $2";
     }
-    // this is PostgreSQL: two selects are necessary
-    // https://stackoverflow.com/questions/9795660/postgresql-distinct-on-with-different-order-by
-		query = "SELECT * FROM (" + query + ") as UNIQTOKENS ORDER by id DESC LIMIT 10";
+		query = "SELECT grp.id, tk, userlogs.corpus, userlogs.query FROM (" + query + " GROUP BY tk" + ") as grp JOIN userlogs ON userlogs.id = grp.id ORDER BY grp.id DESC"; //  LIMIT 10
 		const res = await pool.query(query, values);
 		return res.rows;
 	},

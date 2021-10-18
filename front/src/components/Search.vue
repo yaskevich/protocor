@@ -49,14 +49,19 @@
     <div v-for="(value, key) in resp.documents" class="p-mt-1 doc p-p-2 p-shadow-3" :key="key">
       <div v-for="(snippet, index) in value.snippets" class="p-mt-2 p-mb-2 snippet p-p-1" :key="index">
         <span v-for="(word, num) in snippet.words" :class="classify(word)" :key="num">
-                    <span v-if="word.type == 'plain'">
-                      {{word.text}}
-                    </span>
-        <span v-else>
-                      <Button class="p-button-sm p-button-plain p-button-text token-button " :style="word.hit? 'color:darkred; font-weight:bold;': 'color:black;' " @click="getTokenInfo(word)">
-                          <span :class="word.obsc? 'obsc': ''" :title="word.obsc? word.text: ''">{{word.text}}</span>
-        </Button>
-        </span>
+          <template v-if="word.type == 'plain'">
+            <span v-if="word.text.includes('<br')">
+                {{word.text.replace(/(<([^>]+)>)/gi, "")}}<br/>
+            </span>
+            <span v-else>
+              {{word.text}}
+            </span>
+          </template>
+          <template v-else>
+            <Button class="p-button-sm p-button-plain p-button-text token-button " :style="word.hit? 'color:darkred; font-weight:bold;': 'color:black;' " @click="getTokenInfo(word)">
+              <span :class="word.obsc? 'obsc': ''" :title="word.obsc? word.text: ''">{{word.text}}</span>
+            </Button>
+          </template>
         </span>
         <Button icon="pi pi-heart"
                 :class="'p-button-rounded mini-button ' + (likeContexts.includes(snippet.expand_context_url)?' ':'p-button-primary p-button-text')"

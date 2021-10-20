@@ -13,6 +13,7 @@ import jwt from 'jsonwebtoken';
 import fs from 'fs';
 import swaggerJsDoc from 'swagger-jsdoc';
 import swaggerExpress from 'swagger-ui-express';
+import Bowser from "bowser";
 
 import db from './db.js';
 import search from './search.js';
@@ -53,6 +54,7 @@ const swaggerUIOptions = {
 	const app = express();
 	const port = process.env.PORT || 3061;
 	// console.log("cache keys:", search.cache.keysSync());
+	const dt = new Intl.DateTimeFormat('ru-RU', { year: 'numeric', month: 'numeric', day: 'numeric', hour12: false, hour: "numeric", minute: "numeric", second: "numeric"});
 
 	const serializeQuery = (method, query) => method.replace(/\//g, '') + Object.entries(query).map( x => x.join('') ).join('');
 
@@ -91,6 +93,13 @@ const swaggerUIOptions = {
 			}));
 	}
 
+	app.use( async(req, res, next) => {
+		if (req.url === "/api/config"){
+			const ua = Bowser.parse(req.get('user-agent'));
+			console.log(`${dt.format(Date.now()).replace(',', '')} · ${req.ip} · ${ua.browser.name} ${ua.browser.version.split('.').shift()} · ${ua.os.name} ${ua.os.versionName}`);
+		}
+		next();
+	});
 	// Routes
 
 	/**

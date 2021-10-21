@@ -55,6 +55,7 @@ const swaggerUIOptions = {
 	const port = process.env.PORT || 3061;
 	// console.log("cache keys:", search.cache.keysSync());
 	const dt = new Intl.DateTimeFormat('ru-RU', { year: 'numeric', month: 'numeric', day: 'numeric', hour12: false, hour: "numeric", minute: "numeric", second: "numeric"});
+	const logEvents = ["query", "trend", "like"];
 
 	const serializeQuery = (method, query) => method.replace(/\//g, '') + Object.entries(query).map( x => x.join('') ).join('');
 
@@ -302,8 +303,7 @@ const swaggerUIOptions = {
   *        description: results in JSON format
   */
 	app.get('/api/userlogs', auth, async(req, res) => {
-		const routes = ["query", "trend"];
-		const route = routes.includes(req.query.id) ? req.query.id : "";
+		const route = logEvents.includes(req.query.id) ? req.query.id : "";
 		res.json(await db.getUserlogs(req.user.id, route));
 	});
 /**
@@ -464,8 +464,13 @@ const swaggerUIOptions = {
 // temporary solution (because of current client architecture)
 // logging should be implemented just in a query, not separately!
 	app.post('/api/auth/log', auth, async(req, res) => {
-		const result = db.saveQuery(req.user.id, 'trend', req.body.corpus|| 'main', req.body);
-		res.json({"result": "ok"});
+		if (logEvents.includes(req.body.route)){
+			console.log("save query", req.body);
+			const result = db.saveQuery(req.user.id, req.body.route, req.body.corpus || 'main', req.body);
+			res.status(200).send("OK")
+		} else {
+			res.status(404).send('Not found');
+		}
 	});
 	/**
   * @swagger

@@ -46,29 +46,34 @@
         }
       });
 
-      const addToken = async () => {
+      const logTrend = async() => {
+        if (store.state.key) {
+          const config = {
+            headers: { Authorization: 'Bearer ' + store.state.key },
+          };
+          try {
+            await axios.post('/api/auth/log', { tokens: store.state.trends, route:  'trend' }, config);
+          } catch (error) {
+            console.log('Cannot post', error);
+          }
+        }
+      };
+
+      const addToken = async() => {
         if (token.value) {
           token.value = token.value.trim();
           console.log('token', token.value);
           if (!store.state.trends.includes(token.value)) {
             store.state.trends.push(token.value);
-            const config = {
-              headers: { Authorization: 'Bearer ' + store.state.key },
-            };
-            if (store.state.key) {
-              try {
-                await axios.post('/api/auth/log', { tokens: store.state.trends }, config);
-              } catch (error) {
-                console.log('Cannot post', error);
-              }
-            }
+            await logTrend();
           }
           token.value = '';
         }
       };
 
-      const removeToken = val => {
+      const removeToken = async(val) => {
         store.state.trends.splice(store.state.trends.indexOf(val), 1);
+        await logTrend();
       };
 
       return {

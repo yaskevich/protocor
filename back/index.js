@@ -497,6 +497,19 @@ const swaggerUIOptions = {
 		const dict  = await db.getFeaturesDict(corpus);
 		const count = await db.getCorpusCount(corpus);
 		const meta = await db.getMetafields('ru');
+		res.json({ count, dict, props, meta });
+	});
+	/**
+  * @swagger
+  * /api/corpora:
+  *  get:
+  *    tags: [Metadata]
+  *    description: Return information on every corpus available for search
+  *    responses:
+  *      '200':
+  *        description: results in JSON format
+  */
+	app.get('/api/corpora', (req, res) => {
 		const corpora = [
 			{ name: 'основной', id: 'main', freq: true },
 			{ name: 'газетный', id: 'paper', freq: true },
@@ -517,9 +530,8 @@ const swaggerUIOptions = {
 
 			{ name: 'синтаксический', id: 'syntax' },
 		];
-		res.json({ corpora, count, dict, props, meta });
+		res.json(corpora);
 	});
-
 	app.listen(port);
 	// console.log(`Running at port ${port}`);
 })()

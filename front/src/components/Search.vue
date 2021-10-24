@@ -259,10 +259,6 @@
           // icon: 'pi pi-upload',
         }));
         // console.log("Grammar items", items);
-
-        const data = await store.getData('features', 'spoken');
-        Object.assign(corpora, {} , data.corpora );
-
       });
 
       const renderChart = async () => {

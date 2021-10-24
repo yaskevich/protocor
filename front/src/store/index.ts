@@ -96,8 +96,9 @@ const getUser = async() => {
 
 const getConfig = async() => {
     try {
-      const response = await axios.get("/api/config");
-      state.config = response.data;
+      const responses = await Promise.all([axios.get("/api/config"), axios.get("/api/corpora")]);
+      state.config = responses[0].data;
+      state.corpora = responses[1].data;
     } catch (error) {
       console.log("Cannot get config", error)
       return error;

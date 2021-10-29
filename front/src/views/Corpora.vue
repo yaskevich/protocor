@@ -52,7 +52,7 @@
         dict.value = groupByBrand(data.dict);
         count.value = data.count;
         fields.value = data.meta;
-        corpora.value = data.corpora;
+        corpora.value = store.state.corpora;
         selectedCorpus.value  = corpus;
       }
 
